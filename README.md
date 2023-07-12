@@ -1,8 +1,10 @@
 # YAL's Deck (working title)
 
+**Quick links:** [itch.io](https://yellowafterlife.itch.io/deck) (donations, pre-built binaries) · [demo video](media/demo.mp4)
+
 ![](media/screenshot.png)
 
-This little tool allows you to embed multiple windows into a horizontally scrolling view.
+This little tool allows you to embed multiple windows into a horizontally scrolling view!
 
 In doing so, you can combine several feeds from unrelated social media pages into a sort of "universal dashboard".
 But you aren't limited to just web pages - almost any application can be embedded into the tool.

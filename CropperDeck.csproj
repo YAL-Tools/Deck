@@ -7,7 +7,7 @@
     <ProjectGuid>{968351C8-79DF-4713-95DD-BB7B480CE29A}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>CropperDeck</RootNamespace>
-    <AssemblyName>CropperDeck</AssemblyName>
+    <AssemblyName>YAL-Deck</AssemblyName>
     <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <Deterministic>true</Deterministic>

@@ -3,7 +3,7 @@
 ##
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
-YAL's Deck.zip
+export/*.zip
 
 # User-specific files
 *.rsuser
