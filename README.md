@@ -1,8 +1,8 @@
 # YAL's Deck (working title)
 
-**Quick links:** [itch.io](https://yellowafterlife.itch.io/deck) (donations, pre-built binaries) · [demo video](media/demo.mp4)
+**Quick links:** [itch.io](https://yellowafterlife.itch.io/deck) (donations, pre-built binaries)
 
-![](media/screenshot.png)
+https://github.com/YAL-Tools/Deck/assets/731492/5fd24821-81eb-4646-b76f-595f783f8cb9
 
 This little tool allows you to embed multiple windows into a horizontally scrolling view!
 
