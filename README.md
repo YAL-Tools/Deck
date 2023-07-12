@@ -1,6 +1,6 @@
 # YAL's Deck (working title)
 
-![](screenshot.png)
+![](media/screenshot.png)
 
 This little tool allows you to embed multiple windows into a horizontally scrolling view.
 
@@ -12,14 +12,36 @@ But you aren't limited to just web pages - almost any application can be embedde
 - Click on the "+" button on the sidebar to add a column
 - Press Insert/Remove Window in the column's toolbar
 - Click on (or otherwise give focus to) your window to embed it into the program
-- The window should now be embedded into the column.
-- You can un-embed a window by pressing the Insert/Remove button again.
+- You can un-embed a window later by pressing the Insert/Remove button again.
 - If you need to take a closer look at a column, you can press on Expand to show it in an individual view.  
 	Clicking outside of the window will return to regular view.
 - Columns can be re-arranged or removed using a drop-down menu near the column name.
 - The same menu can be used to change the name and icon of a column.
 - Text fields inside the column header allows you to change column widths (in pixels).
 - Crop menu allows you to change how much will be subtracted from each side of the window (typically to remove window frames).
+
+## DeckLightbox (optional)
+
+<a href="media/lightbox-1.png"><img src="media/lightbox-1.png" width="320"></a>
+<a href="media/lightbox-2.png"><img src="media/lightbox-2.png" width="320"></a>
+
+This little browser extension replaces the default image viewer on Twitter/Cohost/Mastodon with a fancier one than can be panned around and zoomed.
+
+It also tells the tool (by sending an HTTP request) to expand the column
+when opening the image viewer and to collapse it when closing the image viewer.
+
+This allows the dashboard to behave as if the columns aren't self-contained, which feels very nice.
+
+<details><summary>How to install</summary>
+
+**Note:** If you are using Mastodon, you'll have to edit `manifest.json` to include your domain(s) -
+the default is just the `mastodon.gamedev.place`.
+
+Enable "developer mode" at `chrome://extensions/` and "load unpacked" the DeckLightbox directory from the repo.
+
+Firefox considers the extension to be corrupt but this might be a fixable oversight.
+
+</details>
 
 ## Caveats
 

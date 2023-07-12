@@ -84,7 +84,7 @@ namespace CropperDeck {
 			return Image.FromStream(stream);
 		}
 
-		void ShowOverlay() {
+		public void ShowOverlay() {
 			if (Window == null) return;
 			MainForm.ShowOverlay(true);
 			var panOverlay = MainForm.PanOverlay;
@@ -111,6 +111,8 @@ namespace CropperDeck {
 				Window.Insert();
 				Window.Update();
 			}
+			MainForm.ShowOverlay(false);
+			MainForm.PanOverlayColumn = null;
 		}
 
 		private void TmPadding_Init() {

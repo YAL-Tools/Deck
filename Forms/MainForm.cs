@@ -4,6 +4,7 @@ using System.ComponentModel;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Net;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading.Tasks;
@@ -36,6 +37,27 @@ namespace CropperDeck {
 			CenterToScreen();
 		}
 
+		MicroServer OverlayServer;
+		void StartOverlayServer() {
+			OverlayServer = new MicroServer((HttpListenerRequest req) => {
+				switch (req.Url.AbsolutePath) {
+					case "/lightbox-open":
+						var hwnd = WinAPI.GetForegroundWindow();
+						foreach (var col in GetDeckColumns()) {
+							if (col.Window == null || col.Window.Handle != hwnd) continue;
+							col.ShowOverlay();
+							break;
+						}
+						break;
+					case "/lightbox-close":
+						PanOverlayColumn?.HideOverlay();
+						break;
+				}
+				return "";
+			});
+			OverlayServer.Start(2023);
+		}
+
 		public MainForm(string deck = "default") {
 			DeckName = deck;
 			InitializeComponent();
@@ -49,15 +71,17 @@ namespace CropperDeck {
 			PanOverlay.Height = Height;
 			PanOverlay.Visible = false;
 			PanOverlay.Click += (object sender, EventArgs e) => {
-				var pan = PanOverlayColumn;
-				if (pan == null) return;
-				PanOverlayColumn = null;
-				pan.HideOverlay();
-				ShowOverlay(false);
+				PanOverlayColumn?.HideOverlay();
 			};
 			Controls.Add(PanOverlay);
-			//
+			StartOverlayServer();
 		}
+		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
+			TmFlush_Tick(null, null);
+			EjectWindows();
+			OverlayServer.Stop();
+		}
+
 		public void ShowOverlay(bool show) {
 			Action<Control> proc = (Control ctl) => {
 #if true
@@ -135,11 +159,6 @@ namespace CropperDeck {
 			PanCtr.ResumeLayout();
 			FlushConfig();
 			RebuildQuickAccess();
-		}
-
-		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
-			TmFlush_Tick(null, null);
-			EjectWindows();
 		}
 
 		private void MainForm_ResizeEnd(object sender, EventArgs e) {

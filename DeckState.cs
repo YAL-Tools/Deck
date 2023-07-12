@@ -12,7 +12,7 @@ using System.Windows.Forms;
 namespace CropperDeck {
 	public class DeckState {
 		public string Name;
-		public int Width, Height;
+		public int Width = 1024, Height = 600;
 		public List<ColumnData> Columns = new List<ColumnData>();
 		public List<CropMargins> Margins = new List<CropMargins>();
 		public List<CropMargins> HiddenMargins = new List<CropMargins>();

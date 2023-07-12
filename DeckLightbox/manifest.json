@@ -1,0 +1,31 @@
+{
+	"manifest_version": 2,
+
+	"name": "YAL's Deck Lightbox",
+	"description": "Adds zoomable lightboxes that can communicate with YAL's Deck.",
+	"version": "1.0",
+
+	"permissions": [
+		"https://twitter.com/*",
+		"https://mastodon.gamedev.place/*",
+		"https://cohost.org/*",
+		"tabs"
+	],
+	
+	"commands": {
+	},
+	
+	"background": {
+		"scripts": ["background.js"]
+	},
+	
+	"content_scripts": [{
+		"matches": [
+			"https://twitter.com/*",
+			"https://mastodon.gamedev.place/*",
+			"https://cohost.org/*"
+		],
+		"css": ["lightbox.css"],
+		"js": ["lightbox.js"]
+	}]
+}

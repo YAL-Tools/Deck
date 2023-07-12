@@ -71,6 +71,7 @@
     <Compile Include="Tools\GlassyPanel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Tools\MicroServer.cs" />
     <Compile Include="Tools\ToolStripSpringLabel.cs">
       <SubType>Component</SubType>
     </Compile>
