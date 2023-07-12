@@ -251,7 +251,7 @@ namespace CropperDeck {
 				}
 				Window.Insert();
 				Window.Update();
-			}, this.FindForm());
+			}, MainForm);
 		}
 		public void UpdateCrop() {
 			Window?.Update();

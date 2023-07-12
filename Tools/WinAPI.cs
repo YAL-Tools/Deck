@@ -11,6 +11,9 @@ namespace CropperDeck {
 	/// </summary>
 	public class WinAPI {
 		[DllImport("user32.dll", SetLastError = true)]
+		public static extern IntPtr SetForegroundWindow(IntPtr hWnd);
+
+		[DllImport("user32.dll", SetLastError = true)]
 		public static extern IntPtr SetParent(IntPtr hWndChild, IntPtr hWndNewParent);
 
 		[DllImport("user32.dll")]

@@ -12,6 +12,7 @@ namespace CropperDeck {
 	public partial class ConfigForm : Form {
 		MainForm MainForm;
 		public ConfigForm(MainForm mainForm) {
+			Icon = mainForm.Icon;
 			MainForm = mainForm;
 			InitializeComponent();
 		}

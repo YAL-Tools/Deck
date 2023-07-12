@@ -98,6 +98,7 @@ namespace CropperDeck {
 			//foreach (var pan in GetCropperPanels()) proc(pan.ToolStrip);
 			PanOverlay.Visible = show;
 			PanOverlay.BringToFront();
+			ActiveControl = null;
 		}
 		protected override void WndProc(ref Message m) {
 			// https://stackoverflow.com/a/1296060/5578773
@@ -157,14 +158,19 @@ namespace CropperDeck {
 			PanCtr.Controls.Add(col);
 			PanCtr.Controls.SetChildIndex(col, 0);
 			PanCtr.ResumeLayout();
+			PanCtr.ScrollControlIntoView(col);
 			FlushConfig();
 			RebuildQuickAccess();
 		}
 
-		private void MainForm_ResizeEnd(object sender, EventArgs e) {
+		public void UpdateCrops() {
 			foreach (var pan in GetDeckColumns()) {
 				if (pan != PanOverlayColumn) pan.UpdateCrop();
 			}
+		}
+
+		private void MainForm_ResizeEnd(object sender, EventArgs e) {
+			UpdateCrops();
 		}
 
 		private void TbConfig_Click(object sender, EventArgs e) {
