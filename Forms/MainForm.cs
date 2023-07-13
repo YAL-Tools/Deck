@@ -97,6 +97,8 @@ namespace CropperDeck {
 			};
 			//proc(TsSide);
 			//foreach (var pan in GetCropperPanels()) proc(pan.ToolStrip);
+			PanOverlay.Width = Width;
+			PanOverlay.Height = Height;
 			PanOverlay.Visible = show;
 			PanOverlay.BringToFront();
 			ActiveControl = null;
@@ -172,6 +174,10 @@ namespace CropperDeck {
 
 		private void MainForm_ResizeEnd(object sender, EventArgs e) {
 			UpdateCrops();
+			if (PanOverlay.Visible) {
+				PanOverlay.Width = Width;
+				PanOverlay.Height = Height;
+			}
 		}
 
 		private void TbConfig_Click(object sender, EventArgs e) {
