@@ -237,6 +237,8 @@
 	//
 	const attrLbSrc = "lb-src";
 	function onImgClick(e) {
+		if (e.button != 0) return;
+		if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return;
 		let target = e.target;
 		panShow(target.getAttribute(attrLbSrc), target.src, 0);
 		e.preventDefault();
