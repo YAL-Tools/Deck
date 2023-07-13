@@ -11,10 +11,49 @@ using System.Windows.Forms;
 namespace CropperDeck {
 	public partial class ConfigForm : Form {
 		MainForm MainForm;
+		DeckColors CustomColors { get => MainForm.CustomColors; }
 		public ConfigForm(MainForm mainForm) {
 			Icon = mainForm.Icon;
 			MainForm = mainForm;
 			InitializeComponent();
+
+			CbColors.Checked = CustomColors.Enabled;
+			CbColors.CheckedChanged += (object sender, EventArgs e) => {
+				CustomColors.Enabled = CbColors.Checked;
+				AfterCustomColorChange();
+			};
+
+			int nx = CbColors.Right;
+			nx = AddColorButtonPair(nx, CustomColors.Window, "Window");
+			nx = AddColorButtonPair(nx, CustomColors.Control, "Toolbar");
+			nx = AddColorButtonPair(nx, CustomColors.TextBox, "Textbox");
+			SyncCustomColors();
+		}
+
+
+		int AddColorButtonPair(int x, DeckColorPair pair, string name) {
+			var label = new Label();
+			label.Left = x;
+			label.Top = CbColors.Top;
+			label.TextAlign = ContentAlignment.MiddleCenter;
+			label.Width = 64;
+			label.Height = 23;
+			label.Text = name;
+			Controls.Add(label);
+
+			for (var step = 0; step < 2; step++) {
+				var bt = new ColorPairButton(pair, step == 1);
+				bt.Width = (label.Width - 8) / 2;
+				bt.Left = x + step * (bt.Width + 8);
+				bt.Top = label.Top + 24;
+				bt.Click += (object sender, EventArgs e) => {
+					if (ColDlg.ShowDialog() != DialogResult.OK) return;
+					bt.PairColor = ColDlg.Color;
+					AfterCustomColorChange();
+				};
+				Controls.Add(bt);
+			}
+			return label.Right + 12;
 		}
 
 		private void ConfigForm_Load(object sender, EventArgs e) {
@@ -59,6 +98,51 @@ namespace CropperDeck {
 		private void ConfigForm_FormClosing(object sender, FormClosingEventArgs e) {
 			MainForm.ConfigForm = null;
 			MainForm = null;
+		}
+
+		private void AfterCustomColorChange() {
+			SyncCustomColors();
+			MainForm.SyncCustomColors();
+			MainForm.FlushConfig();
+		}
+		private void SyncCustomColors() {
+			var cc = CustomColors;
+			var en = cc.Enabled;
+			cc.ApplyToForm(this);
+			foreach (Control ctl in Controls) {
+				if (ctl is ColorPairButton cpb) {
+					cpb.PairRef.ApplyTo(ctl, cpb.IsForeColor);
+					continue;
+				}
+				if (ctl is Button bt) {
+					cc.ApplyToButton(bt);
+					continue;
+				}
+				if (ctl is TextBox tb) {
+					cc.ApplyToTextBox(tb);
+					continue;
+				}
+			}
+		}
+	}
+	public class ColorPairButton : Button {
+		public DeckColorPair PairRef;
+		public bool IsForeColor;
+		public Color PairColor {
+			get => IsForeColor ? PairRef.ForeColor : PairRef.BackColor;
+			set {
+				if (IsForeColor) {
+					PairRef.ForeColor = value;
+				} else {
+					PairRef.BackColor = value;
+				}
+			}
+		}
+		public ColorPairButton(DeckColorPair pair, bool isFg) {
+			PairRef = pair;
+			IsForeColor = isFg;
+			Text = isFg ? "Fg" : "Bg";
+			FlatStyle = FlatStyle.Popup;
 		}
 	}
 }

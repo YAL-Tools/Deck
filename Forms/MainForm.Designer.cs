@@ -26,13 +26,13 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.TsSide = new System.Windows.Forms.ToolStrip();
+			this.TbAdd = new System.Windows.Forms.ToolStripButton();
+			this.TbRefresh = new System.Windows.Forms.ToolStripButton();
+			this.TbConfig = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.PanCtr = new System.Windows.Forms.Panel();
 			this.TmFlush = new System.Windows.Forms.Timer(this.components);
 			this.DlgIconPicker = new System.Windows.Forms.OpenFileDialog();
-			this.TbAdd = new System.Windows.Forms.ToolStripButton();
-			this.TbRefresh = new System.Windows.Forms.ToolStripButton();
-			this.TbConfig = new System.Windows.Forms.ToolStripButton();
 			this.TsSide.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -48,35 +48,9 @@
 			this.TsSide.Location = new System.Drawing.Point(0, 0);
 			this.TsSide.Name = "TsSide";
 			this.TsSide.Padding = new System.Windows.Forms.Padding(2, 0, 2, 0);
-			this.TsSide.RenderMode = System.Windows.Forms.ToolStripRenderMode.Professional;
 			this.TsSide.Size = new System.Drawing.Size(30, 450);
 			this.TsSide.TabIndex = 1;
 			this.TsSide.Text = "toolStrip1";
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(25, 6);
-			// 
-			// PanCtr
-			// 
-			this.PanCtr.AutoScroll = true;
-			this.PanCtr.BackColor = System.Drawing.Color.Transparent;
-			this.PanCtr.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PanCtr.Location = new System.Drawing.Point(30, 0);
-			this.PanCtr.Name = "PanCtr";
-			this.PanCtr.Size = new System.Drawing.Size(770, 450);
-			this.PanCtr.TabIndex = 2;
-			// 
-			// TmFlush
-			// 
-			this.TmFlush.Interval = 3000;
-			this.TmFlush.Tick += new System.EventHandler(this.TmFlush_Tick);
-			// 
-			// DlgIconPicker
-			// 
-			this.DlgIconPicker.Filter = "PNG images|*.png|All files|*.*";
-			this.DlgIconPicker.FileOk += new System.ComponentModel.CancelEventHandler(this.IconPicker_FileOk);
 			// 
 			// TbAdd
 			// 
@@ -107,6 +81,31 @@
 			this.TbConfig.Size = new System.Drawing.Size(25, 20);
 			this.TbConfig.Text = "Settings";
 			this.TbConfig.Click += new System.EventHandler(this.TbConfig_Click);
+			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(25, 6);
+			// 
+			// PanCtr
+			// 
+			this.PanCtr.AutoScroll = true;
+			this.PanCtr.BackColor = System.Drawing.Color.Transparent;
+			this.PanCtr.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PanCtr.Location = new System.Drawing.Point(30, 0);
+			this.PanCtr.Name = "PanCtr";
+			this.PanCtr.Size = new System.Drawing.Size(770, 450);
+			this.PanCtr.TabIndex = 2;
+			// 
+			// TmFlush
+			// 
+			this.TmFlush.Interval = 3000;
+			this.TmFlush.Tick += new System.EventHandler(this.TmFlush_Tick);
+			// 
+			// DlgIconPicker
+			// 
+			this.DlgIconPicker.Filter = "PNG images|*.png|All files|*.*";
+			this.DlgIconPicker.FileOk += new System.ComponentModel.CancelEventHandler(this.IconPicker_FileOk);
 			// 
 			// MainForm
 			// 

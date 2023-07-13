@@ -51,6 +51,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="DeckColors.cs" />
     <Compile Include="DeckState.cs" />
     <Compile Include="DeckColumn.cs">
       <SubType>Component</SubType>
@@ -78,6 +79,7 @@
     <Compile Include="Tools\ToolStripSpringLabel.cs">
       <SubType>Component</SubType>
     </Compile>
+    <Compile Include="Tools\ToolStripSystemRendererWithoutBorder.cs" />
     <Compile Include="Tools\WinAPI.cs" />
     <Compile Include="Forms\WindowPicker.cs">
       <SubType>Form</SubType>

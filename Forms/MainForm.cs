@@ -18,6 +18,7 @@ namespace CropperDeck {
 		public ConfigForm ConfigForm = null;
 		public Panel PanOverlay;
 		public DeckColumn PanOverlayColumn = null;
+		public DeckColors CustomColors = new DeckColors();
 
 		public void FlushConfig() {
 			if (!TmFlush.Enabled) TmFlush.Start();
@@ -187,6 +188,16 @@ namespace CropperDeck {
 
 		private void TbRefresh_Click(object sender, EventArgs e) {
 			MainForm_ResizeEnd(sender, e);
+		}
+
+		public void SyncCustomColors() {
+			var cc = CustomColors;
+			var en = cc.Enabled;
+			cc.ApplyToForm(this);
+			cc.ApplyToToolStrip(TsSide);
+			foreach (var col in GetDeckColumns()) {
+				cc.ApplyToToolStrip(col.ToolStrip);
+			}
 		}
 	}
 }

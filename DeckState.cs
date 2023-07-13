@@ -11,16 +11,26 @@ using System.Windows.Forms;
 
 namespace CropperDeck {
 	public class DeckState {
+		public string resourceType = "YAL's Deck";
+		public int resourceVersion = 101;
 		public string Name;
 		public int Width = 1024, Height = 600;
 		public List<ColumnData> Columns = new List<ColumnData>();
 		public List<CropMargins> Margins = new List<CropMargins>();
 		public List<CropMargins> HiddenMargins = new List<CropMargins>();
+		public DeckColors CustomColors = new DeckColors();
+		public DeckState() {
+
+		}
+		public void InitMissing() {
+			if (CustomColors == null) CustomColors = new DeckColors();
+		}
 
 		public void Acquire(MainForm form) {
 			Name = form.DeckName;
 			Width = form.Width;
 			Height = form.Height;
+			CustomColors = form.CustomColors;
 			foreach (var m in form.CropMargins) Margins.Add(m);
 			foreach (var pan in form.GetDeckColumns()) {
 				var cm = pan.CropMargins;
@@ -68,7 +78,9 @@ namespace CropperDeck {
 				form.PanCtr.Controls.SetChildIndex(pan, 0);
 			}
 			form.PanCtr.ResumeLayout();
+			form.CustomColors = CustomColors;
 			form.RebuildQuickAccess();
+			form.SyncCustomColors();
 		}
 		public void Save() {
 			if (!Directory.Exists("config")) Directory.CreateDirectory("config");
@@ -96,7 +108,9 @@ namespace CropperDeck {
 			if (File.Exists(path)) {
 				try {
 					var text = File.ReadAllText(path);
-					return JsonConvert.DeserializeObject<DeckState>(text);
+					var state = JsonConvert.DeserializeObject<DeckState>(text);
+					state.InitMissing();
+					return state;
 				} catch (Exception e) {
 					MessageBox.Show(e.ToString(), "Error loading configuration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
