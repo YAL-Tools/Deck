@@ -47,6 +47,8 @@ namespace CropperDeck {
 				bt.Left = x + step * (bt.Width + 8);
 				bt.Top = label.Top + 24;
 				bt.Click += (object sender, EventArgs e) => {
+					ColDlg.Color = bt.PairColor;
+					ColDlg.FullOpen = true;
 					if (ColDlg.ShowDialog() != DialogResult.OK) return;
 					bt.PairColor = ColDlg.Color;
 					AfterCustomColorChange();
