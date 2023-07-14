@@ -52,7 +52,7 @@ namespace CropperDeck {
             WinAPI.AdjustWindowRectEx(ref rect, style, false, exStyle);
 
             // AdjustWindowRectEx adjusts the rect outwards, so left and top are negative
-            return new CropMargins("Auto", -rect.Left, -rect.Top, rect.Right, rect.Bottom);
+            return new CropMargins(CropMargins.AutoCropName, -rect.Left, -rect.Top, rect.Right, rect.Bottom);
         }
 	}
 }

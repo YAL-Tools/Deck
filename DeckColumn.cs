@@ -142,6 +142,7 @@ namespace CropperDeck {
             tbAuto.Click += (sender, args) => {
                 ShouldAutoCrop = true; // window should auto-crop, see DeckWindow.GetAutoCropMargins()
                 Window?.Update();
+                MainForm.FlushConfig();
             };
             TbPadding.DropDownItems.Add(tbAuto);
         }
