@@ -27,6 +27,13 @@
 	let panIdle = false; // whether nothing happened to it yet
 	let zoomed = false;
 	//
+	function clearIntervalEx(interval) {
+		if (interval != null) {
+			clearInterval(interval);
+		}
+		return null;
+	}
+	//
 	function panUpdate() {
 		let pz = (panM >= 1);
 		if (pz != zoomed) {
@@ -125,18 +132,17 @@
 		//console.log(iw, ih, lw, lh, panX, panY, panM);
 	}
 	//
-	let panCheckInt2 = null;
-	function panCheck2() {
+	let checkFullLoad_interval = null;
+	function checkFullLoad() {
 		if (isVideo) {
 			let lw = video.offsetWidth, lh = video.offsetHeight;
 			if (!videoLoaded) return;
-			clearInterval(panCheckInt2); panCheckInt2 = null;
+			checkFullLoad_interval = clearIntervalEx(checkFullLoad_interval);
 			panFit(lw, lh);
-			console.log(lw, lh, panX, panY);
 		} else {
 			let lw = imgFull.width, lh = imgFull.height;
 			if (lw <= 0 || lh <= 0) return;
-			clearInterval(panCheckInt2); panCheckInt2 = null;
+			checkFullLoad_interval = clearIntervalEx(checkFullLoad_interval);
 			//
 			if (imgFullFailed) return;
 			imgFull.style.visibility = "";
@@ -153,44 +159,48 @@
 		panUpdate();
 	}
 	//
-	let panCheckInt = null;
-	function panCheck() {
+	let checkOrigLoad_interval = null;
+	function checkOrigLoad() {
 		let lw = imgOrig.width, lh = imgOrig.height;
 		if (lw <= 0 || lh <= 0) return;
 		if (imgOrigFailed) return;
 		//console.log(lw, lh, img0failed);
-		clearInterval(panCheckInt); panCheckInt = null;
+		clearInterval(checkOrigLoad_interval); checkOrigLoad_interval = null;
 		panFit(lw, lh);
 		imgOrig.style.visibility = "";
 		panUpdate();
-		if (imgFull.src) {
-			panCheckInt2 = setInterval(panCheck2, 25);
-		}
+		if (imgFull.src) checkFullLoad_interval = setInterval(checkFullLoad, 25);
 	}
 	//
-	var panTickInt = null;
-	function panTick() {
+	let checkWindowSize_interval = null;
+	function checkWindowSize() {
 		let lastWidth = panWidth; panWidth = window.innerWidth;
 		let lastHeight = panHeight; panHeight = window.innerHeight;
 		if (panWidth != lastWidth || panHeight != lastHeight) {
+			// if the user resizes the window, we want to keep image centered
 			panX -= (panWidth - lastWidth) / 2;
 			panY -= (panHeight - lastHeight) / 2;
 			panUpdate();
 		}
 	}
-	function panShow(url, orig, mode) {
+	/**
+	 * @param {string} fullURL
+	 * @param {string} origURL
+	 * @param {int} mode (0: image, 1: video)
+	 */
+	function panShow(fullURL, origURL, mode) {
 		chrome.runtime.sendMessage({type:"lightbox-open"});
 		isVideo = mode == 1;
 		imgFull.style.display = imgOrig.style.display = (mode == 0 ? "" : "none");
 		video.style.display = mode == 1 ? "" : "none";
 		if (mode == 1) {
-			video.src = url;
+			video.src = fullURL;
 			videoLoaded = false;
 		} else {
 			imgOrig.removeAttribute("width");
 			imgOrig.removeAttribute("height");
-			imgFull.src = url; imgOrigFailed = false;
-			imgOrig.src = orig; imgFullFailed = false;
+			imgFull.src = fullURL; imgOrigFailed = false;
+			imgOrig.src = origURL; imgFullFailed = false;
 			imgFull.style.visibility = "hidden";
 			imgOrig.style.visibility = "hidden";
 		}
@@ -199,11 +209,11 @@
 		panWidth = window.innerWidth;
 		panHeight = window.innerHeight;
 		if (mode == 2) return;
-		panTickInt = setInterval(panTick, 100);
+		checkWindowSize_interval = setInterval(checkWindowSize, 100);
 		if (isVideo) {
-			panCheckInt2 = setInterval(panCheck2, 25);
+			checkFullLoad_interval = setInterval(checkFullLoad, 25);
 		} else {
-			panCheckInt = setInterval(panCheck, 25);
+			checkOrigLoad_interval = setInterval(checkOrigLoad, 25);
 		}
 	}
 	function panHide() {
@@ -214,9 +224,9 @@
         }
 		panner.parentElement.removeChild(panner);
 		document.removeEventListener("keydown", panKeyDown);
-		clearInterval(panTickInt); panTickInt = null;
-		if (panCheckInt != null) { clearInterval(panCheckInt); panCheckInt = null; }
-		if (panCheckInt2 != null) { clearInterval(panCheckInt2); panCheckInt2 = null; }
+		clearInterval(checkWindowSize_interval); checkWindowSize_interval = null;
+		checkOrigLoad_interval = clearIntervalEx(checkOrigLoad_interval);
+		checkFullLoad_interval = clearIntervalEx(checkFullLoad_interval);
 		chrome.runtime.sendMessage({type:"lightbox-close"});
 	}
 	//
@@ -228,53 +238,93 @@
 			panShow(url, orig, mode);
 		};
 	}
-	//
+	/** 'url("http://yal.cc/x/_.png")' -> 'http://yal.cc/x/_.png' */
 	function getBackgroundUrl(el) {
 		let url = el.style.backgroundImage;
 		if (url == null) return url;
 		return url.slice(4, -1).replace(/"/g, "");
 	}
 	//
-	const attrLbSrc = "lb-src";
+	const attrLbFull = "lb-full";
+	const attrLbOrig = "lb-orig";
+	const attrLbMode = "lb-mode";
 	function onImgClick(e) {
 		if (e.button != 0) return;
 		if (e.altKey || e.ctrlKey || e.shiftKey || e.metaKey) return;
 		let target = e.target;
-		panShow(target.getAttribute(attrLbSrc), target.src, 0);
+		let origURL = target.getAttribute(attrLbOrig) ?? target.src;
+		let fullURL = target.getAttribute(attrLbFull);
+		let mode = target.getAttribute(attrLbMode);
+		if (mode) {
+			mode = parseInt(mode);
+		} else mode = /\.mp4$/.test(fullURL) ? 1 : 0;
+		panShow(fullURL, origURL, mode);
 		e.preventDefault();
 		return false;
 	}
 	//
 	function TwitterChecker() {
 		for (let query of [
-			`img[draggable="true"]:not([${attrLbSrc}])`
+			`img[draggable="true"]:not([${attrLbFull}])`
 		]) for (let img of document.querySelectorAll(query)) {
 			let url = img.src;
-			url = url.replace(/&name=\w+/g, "&name=4096x4096");
-			//url = url.replace(/\?format=jpg/g, "?format=png");
-			img.setAttribute(attrLbSrc, url);
-			img.addEventListener("click", onImgClick);
+			let mt = /^https:\/\/pbs.twimg.com\/tweet_video_thumb\/(\w+)/.exec(url);
+			if (mt) {
+				url = "https://video.twimg.com/tweet_video/" + mt[1] + ".mp4";
+				let par = img.parentElement.parentElement.parentElement;
+				if (par && par.querySelector('div[role="button"]')) {
+					par.setAttribute(attrLbFull, url);
+					par.addEventListener("mousedown", onImgClick);
+				}
+			}
+			else if ((mt = /^https:\/\/pbs.twimg.com\/ext_tw_video_thumb\/(\w+)/.exec(url))) {
+				// TODO: get someone smart to figure out how fxtwitter and legacy tweetdeck do this
+				// https://pbs.twimg.com/ext_tw_video_thumb/1676237527223549954/pu/img/i1OuJJ7HuDmGSCZI?format=jpg&name=small
+				// https://video.twimg.com/ext_tw_video/1676237527223549954/pu/vid/1068x720/S7_k33nq4MkDTU-b.mp4
+				img.setAttribute(attrLbFull, url);
+				continue;
+				// (this doesn't work)
+				let tweet = img.parentElement;
+				while (tweet && tweet.nodeName != "ARTICLE") tweet = tweet.parentElement;
+				let time = tweet.querySelector("time");
+				if (time && time.parentElement.nodeName == "A") {
+					url = time.parentElement.href.replace("://twitter", "://d.fxtwitter");
+				}
+				img.setAttribute(attrLbMode, "1");
+				let par = img.parentElement.parentElement.parentElement;
+				if (par && par.querySelector('div[role="button"]')) {
+					par.setAttribute(attrLbMode, "1");
+					par.setAttribute(attrLbFull, url);
+					par.addEventListener("mousedown", onImgClick);
+				}
+			}
+			else {
+				url = url.replace(/&name=\w+/g, "&name=4096x4096");
+				//url = url.replace(/\?format=jpg/g, "?format=png");
+			}
+			img.setAttribute(attrLbFull, url);
+			img.addEventListener("click", onImgClick, false);
 		}
 	}
 	function CohostChecker() {
 		for (let query of [
-			`img.object-cover.cursor-pointer:not([${attrLbSrc}])`
+			`img.object-cover.cursor-pointer:not([${attrLbFull}])`
 		]) for (let img of document.querySelectorAll(query)) {
 			let url = img.src;
 			url = url.replace(/\b(?:width|height)=\w+(?:&|$)/g, "");
-			img.setAttribute(attrLbSrc, url);
+			img.setAttribute(attrLbFull, url);
 			img.addEventListener("mousedown", onImgClick, false);
 		}
 	}
 	function MastodonChecker() {
 		for (let query of [
-			`a.media-gallery__item-thumbnail:not([${attrLbSrc}])`
+			`a.media-gallery__item-thumbnail:not([${attrLbFull}])`
 		]) for (let a of document.querySelectorAll(query)) {
-			a.setAttribute(attrLbSrc, "");
+			a.setAttribute(attrLbFull, "");
 			let img = a.querySelector("img");
 			if (!img) continue;
 			let url = a.href;
-			img.setAttribute(attrLbSrc, url);
+			img.setAttribute(attrLbFull, url);
 			img.addEventListener("mousedown", onImgClick, false);
 		}
 	}
