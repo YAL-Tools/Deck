@@ -10,7 +10,12 @@ namespace CropperDeck {
 		public DeckColumn Column;
 		public IntPtr Handle;
 		public WinAPI_Rect OrigRect = new WinAPI_Rect();
-		public CropMargins CropMargins { get => Column.CropMargins; }
+		public CropMargins CropMargins {
+            get => (Column.ShouldAutoCrop)
+                ? GetAutoCropMargins()
+                : Column.CropMargins;
+        }
+
 		public DeckWindow(IntPtr hwnd, DeckColumn col) {
 			Handle = hwnd;
 			Column = col;
@@ -36,5 +41,18 @@ namespace CropperDeck {
 				width + CropMargins.Left + CropMargins.Right,
 				height + CropMargins.Top + CropMargins.Bottom);
 		}
+
+        // get margins from winapi based on the current window styles (should crop just the client area)
+        private CropMargins GetAutoCropMargins()
+        {
+            uint style = (uint) WinAPI.GetWindowLong(Handle, WinAPI_GWL.GWL_STYLE);
+            uint exStyle = (uint) WinAPI.GetWindowLong(Handle, WinAPI_GWL.GWL_EXSTYLE);
+
+            WinAPI_Rect rect = new WinAPI_Rect(0, 0, 0, 0);  // we just want margins, so adjusted rect is 0
+            WinAPI.AdjustWindowRectEx(ref rect, style, false, exStyle);
+
+            // AdjustWindowRectEx adjusts the rect outwards, so left and top are negative
+            return new CropMargins(CropMargins.AutoCropName, -rect.Left, -rect.Top, rect.Right, rect.Bottom);
+        }
 	}
 }
