@@ -41,18 +41,21 @@ namespace CropperDeck {
 		MicroServer OverlayServer;
 		void StartOverlayServer() {
 			OverlayServer = new MicroServer((HttpListenerRequest req) => {
-				switch (req.Url.AbsolutePath) {
-					case "/lightbox-open":
-						var hwnd = WinAPI.GetForegroundWindow();
-						foreach (var col in GetDeckColumns()) {
-							if (col.Window == null || col.Window.Handle != hwnd) continue;
-							col.ShowOverlay();
-							break;
-						}
+				var url = req.Url.AbsolutePath;
+				var result = "";
+				if (url == "/lightbox-open") {
+					var hwnd = WinAPI.GetForegroundWindow();
+					foreach (var col in GetDeckColumns()) {
+						if (col.Window == null || col.Window.Handle != hwnd) continue;
+						col.ShowOverlay();
 						break;
-					case "/lightbox-close":
-						PanOverlayColumn?.HideOverlay();
-						break;
+					}
+				} else if (url == "/lightbox-close") {
+					if (PanOverlayColumn == null) return result;
+					var hwnd = WinAPI.GetForegroundWindow();
+					if (PanOverlayColumn.Window == null) return result;
+					if (PanOverlayColumn.Window.Handle != hwnd) return result;
+					PanOverlayColumn.HideOverlay();
 				}
 				return "";
 			});
