@@ -2,12 +2,22 @@
 	let root =  document.body;
 	let scrollElement = document.body.parentElement;
 	let imgOrig = document.createElement("img"); // original
-	let imgOrigFailed = false;
-	imgOrig.onerror = (_) => { imgOrigFailed = true };
+	let imgOrigStatus = null; // (false: failed, true: succeeded)
+	imgOrig.onerror = (_) => { imgOrigStatus = false };
+	imgOrig.onload = (_) => {
+		if (imgOrig.src) imgOrigStatus = true;
+	}
 	//
 	let imgFull = document.createElement("img"); // full-sized
-	let imgFullFailed = false;
-	imgFull.onerror = (_) => { imgFullFailed = true };
+	let imgFullStatus = false;
+	imgFull.onerror = (_) => { imgFullStatus = false };
+	imgFull.onload = (_) => {
+		if (imgFull.src) {
+			imgFullStatus = true;
+			imgOrig.style.visibility = "hidden";
+			panUpdate();
+		}
+	}
 	//
 	let video = document.createElement("video");
 	video.loop = true;
@@ -41,7 +51,9 @@
 			let cl = panner.classList;
 			if (pz) cl.add("zoomed"); else cl.remove("zoomed");
 		}
-		panner.setAttribute("zoom", `${panM*100|0}%`);
+		let text = (panM*100|0) + "%";
+		if (imgFullStatus == null) text += "*";
+		panner.setAttribute("zoom", text);
 		let tf = `matrix(${panM},0,0,${panM},${-panX|0},${-panY|0})`;
 		imgOrig.style.transform = tf;
 		imgFull.style.transform = tf;
@@ -144,9 +156,11 @@
 			if (lw <= 0 || lh <= 0) return;
 			checkFullLoad_interval = clearIntervalEx(checkFullLoad_interval);
 			//
-			if (imgFullFailed) return;
+			if (imgFullStatus == false) return;
 			imgFull.style.visibility = "";
-			if (/*panIdle*/true) { // it makes sense to rescale to original if idle, but looks odd
+			if (imgFullStatus) {
+				// was already used to fit size!
+			} else if (/*panIdle*/true) { // it makes sense to rescale to original if idle, but looks odd
 				panZ -= Math.log2(Math.max(lw / imgOrig.width, lh / imgOrig.height));
 				panM = Math.pow(2, panZ);
 				if (Math.abs((panZ * 2) % 1) > 0.001) {
@@ -163,13 +177,21 @@
 	function checkOrigLoad() {
 		let lw = imgOrig.width, lh = imgOrig.height;
 		if (lw <= 0 || lh <= 0) return;
-		if (imgOrigFailed) return;
+		if (imgOrigStatus == false) return;
 		//console.log(lw, lh, img0failed);
 		clearInterval(checkOrigLoad_interval); checkOrigLoad_interval = null;
-		panFit(lw, lh);
-		imgOrig.style.visibility = "";
+		if (imgFullStatus) {
+			panFit(imgFull.width, imgFull.height);
+		} else {
+			// if the full-sized image already loaded (cached?), we don't want to show original
+			imgOrig.style.visibility = "";
+			panFit(lw, lh);
+		}
 		panUpdate();
-		if (imgFull.src) checkFullLoad_interval = setInterval(checkFullLoad, 25);
+		if (imgFull.src) {
+			checkFullLoad_interval = setInterval(checkFullLoad, 25);
+			checkFullLoad();
+		}
 	}
 	//
 	let checkWindowSize_interval = null;
@@ -199,8 +221,8 @@
 		} else {
 			imgOrig.removeAttribute("width");
 			imgOrig.removeAttribute("height");
-			imgFull.src = fullURL; imgOrigFailed = false;
-			imgOrig.src = origURL; imgFullFailed = false;
+			imgFull.src = fullURL; imgOrigStatus = null;
+			imgOrig.src = origURL; imgFullStatus = null;
 			imgFull.style.visibility = "hidden";
 			imgOrig.style.visibility = "hidden";
 		}
@@ -313,6 +335,10 @@
 			let url = img.src;
 			url = url.replace(/\b(?:width|height)=\w+(?:&|$)/g, "");
 			img.setAttribute(attrLbFull, url);
+			if (img.nextElementSibling && img.nextElementSibling.classList.contains("cursor-pointer")) {
+				// TODO: how does cohost know where to get GIF URL from? Is it all in a closure?
+				return;
+			}
 			img.addEventListener("mousedown", onImgClick, false);
 		}
 	}
