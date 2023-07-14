@@ -14,7 +14,10 @@
 	imgFull.onload = (_) => {
 		if (imgFull.src) {
 			imgFullStatus = true;
-			imgOrig.style.visibility = "hidden";
+			imgFull.style.visibility = "";
+			setTimeout(() => {
+				imgOrig.style.visibility = "hidden";
+			});
 			panUpdate();
 		}
 	}
@@ -145,7 +148,7 @@
 	}
 	//
 	let checkFullLoad_interval = null;
-	function checkFullLoad() {
+	function checkFullLoad(_first = false) {
 		if (isVideo) {
 			let lw = video.offsetWidth, lh = video.offsetHeight;
 			if (!videoLoaded) return;
@@ -158,7 +161,7 @@
 			//
 			if (imgFullStatus == false) return;
 			imgFull.style.visibility = "";
-			if (imgFullStatus) {
+			if (_first && imgFullStatus) {
 				// was already used to fit size!
 			} else if (/*panIdle*/true) { // it makes sense to rescale to original if idle, but looks odd
 				panZ -= Math.log2(Math.max(lw / imgOrig.width, lh / imgOrig.height));
@@ -190,7 +193,7 @@
 		panUpdate();
 		if (imgFull.src) {
 			checkFullLoad_interval = setInterval(checkFullLoad, 25);
-			checkFullLoad();
+			checkFullLoad(true);
 		}
 	}
 	//
