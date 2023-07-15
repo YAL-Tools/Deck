@@ -22,8 +22,8 @@ namespace CropperDeck {
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern bool GetWindowRect(IntPtr hwnd, out WinAPI_Rect lpRect);
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool GetClientRect(IntPtr hwnd, out WinAPI_Rect lpRect);
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern bool GetClientRect(IntPtr hwnd, out WinAPI_Rect lpRect);
 
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern bool SetWindowPos(IntPtr hWnd, IntPtr hWndInsertAfter, int X, int Y, int cx, int cy, uint uFlags);
@@ -50,34 +50,34 @@ namespace CropperDeck {
 			return FindWindow(null, title);
 		}
 
-        [DllImport("user32.dll", SetLastError = true, EntryPoint = "GetWindowLong")]
-        private static extern IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
+		[DllImport("user32.dll", SetLastError = true, EntryPoint = "GetWindowLong")]
+		private static extern IntPtr GetWindowLong32(IntPtr hWnd, int nIndex);
 
-        [DllImport("user32.dll", SetLastError = true, EntryPoint = "GetWindowLongPtr")]
-        private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
+		[DllImport("user32.dll", SetLastError = true, EntryPoint = "GetWindowLongPtr")]
+		private static extern IntPtr GetWindowLongPtr64(IntPtr hWnd, int nIndex);
 
-        public static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
-        {
-            return (IntPtr.Size == 4)
-                ? GetWindowLong32(hWnd, nIndex)
-                : GetWindowLongPtr64(hWnd, nIndex);
-        }
+		public static IntPtr GetWindowLong(IntPtr hWnd, int nIndex)
+		{
+			return (IntPtr.Size == 4)
+				? GetWindowLong32(hWnd, nIndex)
+				: GetWindowLongPtr64(hWnd, nIndex);
+		}
 
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern bool AdjustWindowRectEx(ref WinAPI_Rect lpRect, uint dwStyle, bool bMenu, uint dwExStyle);
+		[DllImport("user32.dll", SetLastError = true)]
+		public static extern bool AdjustWindowRectEx(ref WinAPI_Rect lpRect, uint dwStyle, bool bMenu, uint dwExStyle);
 	}
 
-    public static class WinAPI_GWL
-    {
-        public static readonly int
-        GWL_WNDPROC = -4,
-        GWL_HINSTANCE = -6,
-        GWL_HWNDPARENT = -8,
-        GWL_STYLE = -16,
-        GWL_EXSTYLE = -20,
-        GWL_USERDATA = -21,
-        GWL_ID = -12;
-    }
+	public static class WinAPI_GWL
+	{
+		public static readonly int
+		GWL_WNDPROC = -4,
+		GWL_HINSTANCE = -6,
+		GWL_HWNDPARENT = -8,
+		GWL_STYLE = -16,
+		GWL_EXSTYLE = -20,
+		GWL_USERDATA = -21,
+		GWL_ID = -12;
+	}
 
 	public static class WinAPI_SWP {
 		public static IntPtr
@@ -104,13 +104,13 @@ namespace CropperDeck {
 	}
 	[StructLayout(LayoutKind.Sequential)]
 	public struct WinAPI_Rect {
-        public WinAPI_Rect(int left, int top, int right, int bottom)
-        {
-            Left = left;
-            Top = top;
-            Right = right;
-            Bottom = bottom;
-        }
+		public WinAPI_Rect(int left, int top, int right, int bottom)
+		{
+			Left = left;
+			Top = top;
+			Right = right;
+			Bottom = bottom;
+		}
 		public int Left, Top, Right, Bottom;
 		public int Width { get => Right - Left; }
 		public int Height { get => Bottom - Top; }

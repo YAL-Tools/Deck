@@ -30,8 +30,8 @@ namespace CropperDeck {
 			Right = right;
 			Bottom = bottom;
 		}
-
-        // just so we don't have a hardcoded string in 5 different places
-        public static readonly string AutoCropName = "Auto";
-    }
+		
+		// just so we don't have a hardcoded string in 5 different places
+		public static readonly string AutoCropName = "Auto";
+	}
 }

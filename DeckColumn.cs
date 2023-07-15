@@ -24,7 +24,7 @@ namespace CropperDeck {
 		public ToolStripTextBox TfName;
 		public DeckWindow Window = null;
 		public CropMargins CropMargins = CropMargins.Zero;
-        public bool ShouldAutoCrop = false;
+		public bool ShouldAutoCrop = false;
 		public Panel WindowCtr;
 		public ToolStripSpringLabel TlName;
 		public Point OverlaySize = new Point(0, 0);
@@ -131,21 +131,21 @@ namespace CropperDeck {
 				tb.Width = 80;
 				tb.Click += (object sender, EventArgs e) => {
 					CropMargins = m;
-                    ShouldAutoCrop = false; // window should not auto-crop
+					ShouldAutoCrop = false; // window should not auto-crop
 					Window?.Update();
 					MainForm.FlushConfig();
 				};
 				TbPadding.DropDownItems.Add(tb);
 			}
 
-            var tbAuto = new ToolStripButton("Auto-Crop\u2122");
-            tbAuto.Click += (sender, args) => {
-                ShouldAutoCrop = true; // window should auto-crop, see DeckWindow.GetAutoCropMargins()
-                Window?.Update();
-                MainForm.FlushConfig();
-            };
-            TbPadding.DropDownItems.Add(tbAuto);
-        }
+			var tbAuto = new ToolStripButton("Auto-Crop\u2122");
+			tbAuto.Click += (sender, args) => {
+				ShouldAutoCrop = true; // window should auto-crop, see DeckWindow.GetAutoCropMargins()
+				Window?.Update();
+				MainForm.FlushConfig();
+			};
+			TbPadding.DropDownItems.Add(tbAuto);
+		}
 
 		private void TbConfig_Init() {
 			TbConfig = new ToolStripDropDownButton("Edit...", Resources.pencil);
