@@ -34,15 +34,12 @@ namespace CropperDeck {
 			foreach (var m in form.CropMargins) Margins.Add(m);
 			foreach (var pan in form.GetDeckColumns()) {
 				var cm = pan.CropMargins;
-				string cmName;
-				if (pan.ShouldAutoCrop) {
-					cmName = CropMargins.AutoCropName;
-				}
-				else {
-					cmName = cm.Name;
-					if (!MarginsContainName(Margins, cmName) && !MarginsContainName(HiddenMargins, cmName)) {
-						HiddenMargins.Add(cm);
-					}
+				var cmName = cm.Name;
+				if (!MarginsContainName(Margins, cmName)
+					&& !MarginsContainName(CropMargins.Special, cmName)
+					&& !MarginsContainName(HiddenMargins, cmName)
+				) {
+					HiddenMargins.Add(cm);
 				}
 				var cd = new ColumnData();
 				cd.Name = pan.ColumnName;
@@ -62,19 +59,19 @@ namespace CropperDeck {
 			form.PanCtr.SuspendLayout();
 			foreach (var panState in Columns) {
 				var pan = new DeckColumn(form);
-				if (panState.CropStyle == CropMargins.AutoCropName) {
-					pan.ShouldAutoCrop = true;
-				}
-				else {
-					var cm = Margins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
-					if (cm.Name == null)
-					{
-						cm = HiddenMargins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
-						if (cm.Name == null) cm = CropMargins.Zero;
-					}
-					pan.CropMargins = cm;
-					pan.ShouldAutoCrop = false;
-				}
+
+				CropMargins cm;
+				do {
+					cm = Margins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					if (cm.Name != null) break;
+					cm = CropMargins.Special.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					if (cm.Name != null) break;
+					cm = HiddenMargins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					if (cm.Name != null) break;
+					cm = CropMargins.Zero;
+				} while (false);
+				pan.CropMargins = cm;
+
 				pan.TfName.Text = pan.TlName.Text = pan.ColumnName = panState.Name;
 				if (panState.Icon != "") {
 					pan.IconName = panState.Icon;
@@ -98,7 +95,7 @@ namespace CropperDeck {
 		public void Save() {
 			if (!Directory.Exists("config")) Directory.CreateDirectory("config");
 			var text = JsonConvert.SerializeObject(this, Formatting.Indented);
-			File.WriteAllText($"config/{Name}.json", text);
+			File.WriteAllText($"config/{Name}.json", text, Encoding.UTF8);
 		}
 
 		static bool MarginsContainName(List<CropMargins> list, string cmName) {

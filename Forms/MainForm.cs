@@ -183,7 +183,7 @@ namespace CropperDeck {
 			}
 		}
 
-		private void TbConfig_Click(object sender, EventArgs e) {
+		public void TbConfig_Click(object sender, EventArgs e) {
 			if (ConfigForm == null) {
 				ConfigForm = new ConfigForm(this);
 				ConfigForm.Show();

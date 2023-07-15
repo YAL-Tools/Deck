@@ -131,12 +131,12 @@
 
 		private System.Windows.Forms.ToolStrip TsSide;
 		private System.Windows.Forms.ToolStripButton TbAdd;
-		private System.Windows.Forms.ToolStripButton TbConfig;
 		public System.Windows.Forms.Panel PanCtr;
 		private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
 		private System.Windows.Forms.Timer TmFlush;
 		public System.Windows.Forms.OpenFileDialog DlgIconPicker;
 		private System.Windows.Forms.ToolStripButton TbRefresh;
+		public System.Windows.Forms.ToolStripButton TbConfig;
 	}
 }
 

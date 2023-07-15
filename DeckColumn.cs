@@ -24,7 +24,6 @@ namespace CropperDeck {
 		public ToolStripTextBox TfName;
 		public DeckWindow Window = null;
 		public CropMargins CropMargins = CropMargins.Zero;
-		public bool ShouldAutoCrop = false;
 		public Panel WindowCtr;
 		public ToolStripSpringLabel TlName;
 		public Point OverlaySize = new Point(0, 0);
@@ -80,6 +79,7 @@ namespace CropperDeck {
 			MainForm.FlushConfig();
 		}
 		public static Image LoadImage(string path) {
+			// doing Image.FromFile locks the file and then we can't delete it along with the column
 			var bytes = File.ReadAllBytes(path);
 			var stream = new MemoryStream(bytes);
 			return Image.FromStream(stream);
@@ -119,32 +119,43 @@ namespace CropperDeck {
 		private void TmPadding_Init() {
 			TbPadding = new ToolStripDropDownButton("Crop...", Resources.shape_handles);
 			TbPadding.DisplayStyle = ToolStripItemDisplayStyle.Image;
+			TbPadding.DropDownOpening += TmPadding_DropDownOpening;
 			TmPadding_Build();
 		}
-
-		public void TmPadding_Build() {
-			TbPadding.DropDownItems.Clear();
-			foreach (var m in MainForm.CropMargins) {
-				var tb = new ToolStripButton(m.Name);
-				tb.TextAlign = ContentAlignment.MiddleLeft;
-				//tb.AutoSize = true;
-				tb.Width = 80;
-				tb.Click += (object sender, EventArgs e) => {
-					CropMargins = m;
-					ShouldAutoCrop = false; // window should not auto-crop
-					Window?.Update();
-					MainForm.FlushConfig();
-				};
-				TbPadding.DropDownItems.Add(tb);
+		private void TmPadding_DropDownOpening(object sender, EventArgs e) {
+			var cmName = CropMargins.Name;
+			foreach (var item in TbPadding.DropDownItems) {
+				if (!(item is DeckColumnMarginButton bt)) continue;
+				bt.Checked = bt.Text == cmName;// ? CheckState.Checked : CheckState.Unchecked;
 			}
-
-			var tbAuto = new ToolStripButton("Auto-Crop\u2122");
-			tbAuto.Click += (sender, args) => {
-				ShouldAutoCrop = true; // window should auto-crop, see DeckWindow.GetAutoCropMargins()
+		}
+		private void TmPadding_Build_Margin(CropMargins m) {
+			var tb = new DeckColumnMarginButton();
+			tb.TextAlign = ContentAlignment.MiddleLeft;
+			//tb.AutoSize = true; // doesn't work..?
+			tb.Width = 120;
+			tb.Text = m.Name;
+			tb.Click += (sender, e) => {
+				CropMargins = m;
 				Window?.Update();
 				MainForm.FlushConfig();
 			};
-			TbPadding.DropDownItems.Add(tbAuto);
+			TbPadding.DropDownItems.Add(tb);
+		}
+		public void TmPadding_Build() {
+			TbPadding.DropDownItems.Clear();
+			foreach (var m in MainForm.CropMargins) TmPadding_Build_Margin(m);
+
+			TbPadding.DropDownItems.Add(new ToolStripSeparator());
+			foreach (var m in CropMargins.Special) TmPadding_Build_Margin(m);
+
+			TbPadding.DropDownItems.Add(new ToolStripSeparator());
+			var tbEdit = new ToolStripButton("Add/edit margins");
+			tbEdit.Name = "Edit";
+			tbEdit.Click += (sender, args) => {
+				MainForm.TbConfig_Click(sender, args);
+			};
+			TbPadding.DropDownItems.Add(tbEdit);
 		}
 
 		private void TbConfig_Init() {
@@ -162,7 +173,7 @@ namespace CropperDeck {
 			TbConfig.DropDownItems.Add(TfName);
 
 			var tbIcon = new ToolStripButton("Change icon", Resources.pencil);
-			tbIcon.Click += (object sender, EventArgs e) => {
+			tbIcon.Click += (sender, e) => {
 				MainForm.OnIconPick = (string path) => {
 					if (IconName != "") {
 						if (File.Exists(IconPath)) File.Delete(IconPath);
@@ -181,7 +192,7 @@ namespace CropperDeck {
 			TbConfig.DropDownItems.Add(tbIcon);
 
 			var tbLeft = new ToolStripButton("Move left", Resources.arrow_left);
-			tbLeft.Click += (object sender, EventArgs e) => {
+			tbLeft.Click += (sender, e) => {
 				var ind = MainForm.PanCtr.Controls.GetChildIndex(this);
 				if (ind < MainForm.PanCtr.Controls.Count - 1) {
 					MainForm.PanCtr.Controls.SetChildIndex(this, ind + 1);
@@ -192,7 +203,7 @@ namespace CropperDeck {
 			TbConfig.DropDownItems.Add(tbLeft);
 
 			var tbRight = new ToolStripButton("Move Right", Resources.arrow_right);
-			tbRight.Click += (object sender, EventArgs e) => {
+			tbRight.Click += (sender, e) => {
 				var ind = MainForm.PanCtr.Controls.GetChildIndex(this);
 				if (ind > 0) {
 					MainForm.PanCtr.Controls.SetChildIndex(this, ind - 1);
@@ -203,7 +214,7 @@ namespace CropperDeck {
 			TbConfig.DropDownItems.Add(tbRight);
 
 			var tbDelete = new ToolStripButton("Remove", Resources.delete);
-			tbDelete.Click += (object sender, EventArgs e) => {
+			tbDelete.Click += (sender, e) => {
 				if (MessageBox.Show(
 					"Are you sure you want to delete this column? This cannot be undone!",
 					MainForm.Text, MessageBoxButtons.YesNo, MessageBoxIcon.Warning
@@ -269,4 +280,5 @@ namespace CropperDeck {
 			Window?.Update();
 		}
 	}
+	public class DeckColumnMarginButton : ToolStripButton { }
 }
