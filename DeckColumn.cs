@@ -236,14 +236,13 @@ namespace CropperDeck {
 			TfWidth.BorderStyle = BorderStyle.FixedSingle;
 			TfWidth.Text = "";
 			TfWidth.LostFocus += FdWidth_TextChanged;
-			TfWidth.KeyDown += FdWidth_KeyDown;
-		}
-
-		private void FdWidth_KeyDown(object sender, KeyEventArgs e) {
-			if (e.KeyCode == Keys.Enter) {
-				FdWidth_TextChanged(sender, e);
-				e.Handled = true;
-			}
+			TfWidth.KeyDown += (sender, args) => {
+				if (args.KeyCode == Keys.Enter) {
+					FdWidth_TextChanged(sender, args);
+					args.Handled = true;
+					args.SuppressKeyPress = true;
+				}
+			};
 		}
 
 		private void FdWidth_TextChanged(object sender, EventArgs e) {

@@ -12,8 +12,19 @@ using System.Windows.Forms;
 
 namespace CropperDeck {
 	public partial class MainForm : Form {
-		public static MainForm Inst;
-		public string DeckName;
+		public HomePanel HomePanel;
+		private string deckName;
+		public string DeckName {
+			get => deckName;
+			set {
+				deckName = value;
+				SyncTitle();
+			}
+		}
+		public void SyncTitle() {
+			Text = DeckName + " - " + Suffix;
+		}
+		public string Suffix;
 		public List<CropMargins> CropMargins = new List<CropMargins>();
 		public ConfigForm ConfigForm = null;
 		public Panel PanOverlay;
@@ -25,10 +36,15 @@ namespace CropperDeck {
 		}
 		private void TmFlush_Tick(object sender, EventArgs e) {
 			TmFlush.Stop();
-			var config = new DeckState();
-			config.Acquire(this);
-			config.Save();
-			Console.WriteLine("Saved config for " + DeckName);
+			try {
+				var config = new DeckState();
+				config.Acquire(this);
+				config.Save();
+			} catch (Exception ex) {
+				MessageBox.Show(
+					"Could not save the deck state:\n" + ex,
+					Text, MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
 		}
 
 		public void ResizeAndCenter(int newWidth, int newHeight) {
@@ -38,36 +54,15 @@ namespace CropperDeck {
 			CenterToScreen();
 		}
 
-		MicroServer OverlayServer;
-		void StartOverlayServer() {
-			OverlayServer = new MicroServer((HttpListenerRequest req) => {
-				var url = req.Url.AbsolutePath;
-				var result = "";
-				if (url == "/lightbox-open") {
-					var hwnd = WinAPI.GetForegroundWindow();
-					foreach (var col in GetDeckColumns()) {
-						if (col.Window == null || col.Window.Handle != hwnd) continue;
-						col.ShowOverlay();
-						break;
-					}
-				} else if (url == "/lightbox-close") {
-					if (PanOverlayColumn == null) return result;
-					var hwnd = WinAPI.GetForegroundWindow();
-					if (PanOverlayColumn.Window == null) return result;
-					if (PanOverlayColumn.Window.Handle != hwnd) return result;
-					PanOverlayColumn.HideOverlay();
-				}
-				return "";
-			});
-			OverlayServer.Start(2023);
-		}
-
-		public MainForm(string deck = "default") {
-			DeckName = deck;
+		public MainForm(HomePanel homePanel) {
 			InitializeComponent();
+			HomePanel = homePanel;
+			Suffix = Text;
+			DeckName = homePanel.DeckName;
+			SyncTitle();
 			DoubleBuffered = true;
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-			DeckState.Load(deck).Apply(this);
+			DeckState.Load(DeckName).Apply(this);
 
 			PanOverlay = new Panel();
 			PanOverlay.BackColor = Color.Black;//Color.FromArgb(170, Color.Black);
@@ -78,12 +73,17 @@ namespace CropperDeck {
 				PanOverlayColumn?.HideOverlay();
 			};
 			Controls.Add(PanOverlay);
-			StartOverlayServer();
 		}
 		private void MainForm_FormClosing(object sender, FormClosingEventArgs e) {
 			TmFlush_Tick(null, null);
 			EjectWindows();
-			OverlayServer.Stop();
+			ConfigForm?.Close();
+			HomePanel.MainForm = null;
+			var deckPicker = HomePanel.DeckPicker;
+			HomePanel = null;
+			if (!deckPicker.Visible && deckPicker.GetMainForms().Count == 0) {
+				deckPicker.Close();
+			}
 		}
 
 		public void ShowOverlay(bool show) {
@@ -128,10 +128,17 @@ namespace CropperDeck {
 			}
 			return list;
 		}
-		public void EjectWindows() {
-			foreach (var col in GetDeckColumns()) {
-				col.Window?.Eject();
+		public List<DeckWindow> GetDeckWindows() {
+			// columns are left-docked so the left-most column is the last one in Controls[]
+			var list = new List<DeckWindow>();
+			foreach (var ctl in PanCtr.Controls) {
+				if (!(ctl is DeckColumn col)) continue;
+				if (col.Window != null) list.Insert(0, col.Window);
 			}
+			return list;
+		}
+		public void EjectWindows() {
+			foreach (var wnd in GetDeckWindows()) wnd.Eject();
 		}
 
 		public void RebuildQuickAccess() {
@@ -207,6 +214,12 @@ namespace CropperDeck {
 			foreach (var col in GetDeckColumns()) {
 				cc.ApplyToToolStrip(col.ToolStrip);
 			}
+		}
+
+		private void TbPickDeck_Click(object sender, EventArgs e) {
+			if (HomePanel.DeckPicker.Visible) {
+				HomePanel.DeckPicker.Focus();
+			} else HomePanel.DeckPicker.Show();
 		}
 	}
 }

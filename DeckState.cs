@@ -11,6 +11,11 @@ using System.Windows.Forms;
 
 namespace CropperDeck {
 	public class DeckState {
+		public static string DirectoryName = "config";
+		public static string GetPath(string name) {
+			return $"{DirectoryName}/{name}.json";
+		}
+
 		public string resourceType = "YAL's Deck";
 		public int resourceVersion = 101;
 		public string Name;
@@ -93,9 +98,9 @@ namespace CropperDeck {
 			form.SyncCustomColors();
 		}
 		public void Save() {
-			if (!Directory.Exists("config")) Directory.CreateDirectory("config");
+			if (!Directory.Exists(DirectoryName)) Directory.CreateDirectory(DirectoryName);
 			var text = JsonConvert.SerializeObject(this, Formatting.Indented);
-			File.WriteAllText($"config/{Name}.json", text, Encoding.UTF8);
+			File.WriteAllText(GetPath(Name), text, Encoding.UTF8);
 		}
 
 		static bool MarginsContainName(List<CropMargins> list, string cmName) {
@@ -114,7 +119,7 @@ namespace CropperDeck {
 			return config;
 		}
 		public static DeckState Load(string name) {
-			var path = $"config/{name}.json";
+			var path = GetPath(name);
 			if (File.Exists(path)) {
 				try {
 					var text = File.ReadAllText(path);

@@ -10,11 +10,24 @@ namespace CropperDeck {
 	public class DeckColors {
 		public bool Enabled = false;
 		public DeckColorPair Window, Control, TextBox;
+		public void SetTo(DeckColors cc) {
+			Enabled = cc.Enabled;
+			Window.SetTo(cc.Window);
+			Control.SetTo(cc.Control);
+			TextBox.SetTo(cc.TextBox);
+		}
+
 		public DeckColors() {
 			Window = new DeckColorPair(Color.FromArgb(64, 80, 112), Color.White);
 			Control = new DeckColorPair(Color.FromArgb(26, 32, 45), Color.White);
 			TextBox = new DeckColorPair(Color.FromArgb(16, 36, 65), Color.White);
 		}
+		public DeckColors Copy() {
+			var cc = new DeckColors();
+			cc.SetTo(this);
+			return cc;
+		}
+
 		public void ApplyToForm(Form form) {
 			if (Enabled) {
 				Window.ApplyTo(form);
@@ -93,6 +106,10 @@ namespace CropperDeck {
 		public void ApplyTo(Control ctl, bool invert = false) {
 			ctl.BackColor = invert ? ForeColor : BackColor;
 			ctl.ForeColor = invert ? BackColor : ForeColor;
+		}
+		public void SetTo(DeckColorPair pair) {
+			BackColor = pair.BackColor;
+			ForeColor = pair.ForeColor;
 		}
 	}
 }

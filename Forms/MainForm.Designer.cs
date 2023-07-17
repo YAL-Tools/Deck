@@ -26,13 +26,14 @@
 			this.components = new System.ComponentModel.Container();
 			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.TsSide = new System.Windows.Forms.ToolStrip();
-			this.TbAdd = new System.Windows.Forms.ToolStripButton();
-			this.TbRefresh = new System.Windows.Forms.ToolStripButton();
-			this.TbConfig = new System.Windows.Forms.ToolStripButton();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.PanCtr = new System.Windows.Forms.Panel();
 			this.TmFlush = new System.Windows.Forms.Timer(this.components);
 			this.DlgIconPicker = new System.Windows.Forms.OpenFileDialog();
+			this.TbAdd = new System.Windows.Forms.ToolStripButton();
+			this.TbRefresh = new System.Windows.Forms.ToolStripButton();
+			this.TbConfig = new System.Windows.Forms.ToolStripButton();
+			this.TbPickDeck = new System.Windows.Forms.ToolStripButton();
 			this.TsSide.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -44,6 +45,7 @@
             this.TbAdd,
             this.TbRefresh,
             this.TbConfig,
+            this.TbPickDeck,
             this.toolStripSeparator1});
 			this.TsSide.Location = new System.Drawing.Point(0, 0);
 			this.TsSide.Name = "TsSide";
@@ -51,36 +53,6 @@
 			this.TsSide.Size = new System.Drawing.Size(30, 450);
 			this.TsSide.TabIndex = 1;
 			this.TsSide.Text = "toolStrip1";
-			// 
-			// TbAdd
-			// 
-			this.TbAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.TbAdd.Image = global::CropperDeck.Properties.Resources.add;
-			this.TbAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.TbAdd.Name = "TbAdd";
-			this.TbAdd.Size = new System.Drawing.Size(25, 20);
-			this.TbAdd.Text = "Add";
-			this.TbAdd.Click += new System.EventHandler(this.tbAdd_Click);
-			// 
-			// TbRefresh
-			// 
-			this.TbRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.TbRefresh.Image = global::CropperDeck.Properties.Resources.arrow_refresh_small;
-			this.TbRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.TbRefresh.Name = "TbRefresh";
-			this.TbRefresh.Size = new System.Drawing.Size(25, 20);
-			this.TbRefresh.Text = "Refresh";
-			this.TbRefresh.Click += new System.EventHandler(this.TbRefresh_Click);
-			// 
-			// TbConfig
-			// 
-			this.TbConfig.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-			this.TbConfig.Image = global::CropperDeck.Properties.Resources.cog;
-			this.TbConfig.ImageTransparentColor = System.Drawing.Color.Magenta;
-			this.TbConfig.Name = "TbConfig";
-			this.TbConfig.Size = new System.Drawing.Size(25, 20);
-			this.TbConfig.Text = "Settings";
-			this.TbConfig.Click += new System.EventHandler(this.TbConfig_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -106,6 +78,46 @@
 			// 
 			this.DlgIconPicker.Filter = "PNG images|*.png|All files|*.*";
 			this.DlgIconPicker.FileOk += new System.ComponentModel.CancelEventHandler(this.IconPicker_FileOk);
+			// 
+			// TbAdd
+			// 
+			this.TbAdd.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.TbAdd.Image = global::CropperDeck.Properties.Resources.add;
+			this.TbAdd.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TbAdd.Name = "TbAdd";
+			this.TbAdd.Size = new System.Drawing.Size(25, 20);
+			this.TbAdd.Text = "Add a column";
+			this.TbAdd.Click += new System.EventHandler(this.tbAdd_Click);
+			// 
+			// TbRefresh
+			// 
+			this.TbRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.TbRefresh.Image = global::CropperDeck.Properties.Resources.arrow_refresh_small;
+			this.TbRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TbRefresh.Name = "TbRefresh";
+			this.TbRefresh.Size = new System.Drawing.Size(25, 20);
+			this.TbRefresh.Text = "Refresh window sizes";
+			this.TbRefresh.Click += new System.EventHandler(this.TbRefresh_Click);
+			// 
+			// TbConfig
+			// 
+			this.TbConfig.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.TbConfig.Image = global::CropperDeck.Properties.Resources.cog;
+			this.TbConfig.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TbConfig.Name = "TbConfig";
+			this.TbConfig.Size = new System.Drawing.Size(25, 20);
+			this.TbConfig.Text = "Deck Settings";
+			this.TbConfig.Click += new System.EventHandler(this.TbConfig_Click);
+			// 
+			// TbPickDeck
+			// 
+			this.TbPickDeck.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
+			this.TbPickDeck.Image = global::CropperDeck.Properties.Resources.application_go;
+			this.TbPickDeck.ImageTransparentColor = System.Drawing.Color.Magenta;
+			this.TbPickDeck.Name = "TbPickDeck";
+			this.TbPickDeck.Size = new System.Drawing.Size(25, 20);
+			this.TbPickDeck.Text = "Deck Picker";
+			this.TbPickDeck.Click += new System.EventHandler(this.TbPickDeck_Click);
 			// 
 			// MainForm
 			// 
@@ -137,6 +149,7 @@
 		public System.Windows.Forms.OpenFileDialog DlgIconPicker;
 		private System.Windows.Forms.ToolStripButton TbRefresh;
 		public System.Windows.Forms.ToolStripButton TbConfig;
+		private System.Windows.Forms.ToolStripButton TbPickDeck;
 	}
 }
 

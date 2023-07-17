@@ -46,7 +46,7 @@ namespace CropperDeck {
 				Listener.Prefixes.Add($"http://localhost:{port}/");
 				Listener.Prefixes.Add($"http://127.0.0.1:{port}/");
 				Listener.Start();
-			} catch (Exception e) {
+			} catch (Exception) {
 				MessageBox.Show("Failed to start a micro-HTTP server."
 					+ "\nDeckLightbox will not be able to expand/collapse a column automatically."
 					+ "\nThis message can be safely ignored if you don't care about that.");

@@ -13,7 +13,7 @@ namespace CropperDeck {
 		static void Main() {
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			var form = new MainForm();
+			var form = new DeckPicker();
 			try {
 				Application.Run(form);
 				form.EjectWindows();
