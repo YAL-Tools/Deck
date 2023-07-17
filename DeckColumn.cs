@@ -25,6 +25,15 @@ namespace CropperDeck {
 		public DeckWindow Window = null;
 		public CropMargins CropMargins = CropMargins.Zero;
 		public Panel WindowCtr;
+		private string lastTitle = null;
+		public string LastTitle {
+			get => lastTitle;
+			set {
+				lastTitle = value;
+				LastTitleLabel.Text = value;
+			}
+		}
+		public Label LastTitleLabel;
 		public ToolStripSpringLabel TlName;
 		public Point OverlaySize = new Point(0, 0);
 		public DeckColumn(MainForm mainForm) {
@@ -57,6 +66,12 @@ namespace CropperDeck {
 
 			WindowCtr = new Panel();
 			WindowCtr.Dock = DockStyle.Fill;
+
+			LastTitleLabel = new Label();
+			LastTitleLabel.BackColor = Color.Transparent;
+			LastTitleLabel.Dock = DockStyle.Fill;
+			LastTitleLabel.TextAlign = ContentAlignment.MiddleCenter;
+			WindowCtr.Controls.Add(LastTitleLabel);
 
 			Controls.Add(WindowCtr);
 			Controls.Add(ToolStrip);
@@ -257,26 +272,32 @@ namespace CropperDeck {
 			Window?.Update();
 		}
 
+		public void InsertWindowEx(IntPtr hwnd) {
+			if (hwnd == IntPtr.Zero) return;
+			Window?.Eject();
+			Window = new DeckWindow(hwnd, this);
+			if (TfWidth.Text == "") {
+				Width = Window.GetWidth();
+				TfWidth.Text = "" + Width;
+			}
+			Window.Insert();
+			Window.Update();
+			LastTitleLabel.Visible = false;
+		}
+
 		public void TbInsert_Click(object sender, EventArgs e) {
 			if (Window != null) {
+				LastTitle = WinAPI.GetWindowText(Window.Handle);
 				Window.Eject();
 				Window = null;
+				LastTitleLabel.Visible = true;
 				return;
 			}
-			WindowPicker.Open((IntPtr hwnd) => {
-				if (hwnd == IntPtr.Zero) return;
-				Window?.Eject();
-				Window = new DeckWindow(hwnd, this);
-				if (TfWidth.Text == "") {
-					Width = Window.GetWidth();
-					TfWidth.Text = "" + Width;
-				}
-				Window.Insert();
-				Window.Update();
-			}, MainForm);
+			WindowPicker.Open(InsertWindowEx, MainForm);
 		}
 		public void UpdateCrop() {
 			Window?.Update();
+			LastTitleLabel.Visible = Window == null;
 		}
 	}
 	public class DeckColumnMarginButton : ToolStripButton { }

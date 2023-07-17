@@ -16,12 +16,22 @@ namespace CropperDeck {
 			Icon = mainForm.Icon;
 			MainForm = mainForm;
 			InitializeComponent();
+			Text = mainForm.DeckName + " - YAL's Deck Settings";
 
 			CbColors.Checked = CustomColors.Enabled;
 			CbColors.CheckedChanged += (object sender, EventArgs e) => {
 				CustomColors.Enabled = CbColors.Checked;
 				AfterCustomColorChange();
 			};
+
+			TbMargins.Text = "";
+			foreach (var m in MainForm.CropMargins) {
+				TbMargins.AppendText(m.Name
+					+ " | " + m.Left + " | " + m.Top
+					+ " | " + m.Right + " | " + m.Bottom + "\r\n");
+			}
+
+			DdRecover.SelectedIndex = (int)MainForm.RestoreMode;
 
 			int nx = CbColors.Right;
 			nx = AddColorButtonPair(nx, CustomColors.Window, "Window");
@@ -56,15 +66,6 @@ namespace CropperDeck {
 				Controls.Add(bt);
 			}
 			return label.Right + 12;
-		}
-
-		private void ConfigForm_Load(object sender, EventArgs e) {
-			TbMargins.Text = "";
-			foreach (var m in MainForm.CropMargins) {
-				TbMargins.AppendText(m.Name
-					+ " | " + m.Left + " | " + m.Top
-					+ " | " + m.Right + " | " + m.Bottom + "\r\n");
-			}
 		}
 
 		private void BtSaveMargins_Click(object sender, EventArgs e) {
@@ -125,6 +126,14 @@ namespace CropperDeck {
 					continue;
 				}
 			}
+		}
+
+		private void DdRecover_SelectedIndexChanged(object sender, EventArgs e) {
+			var i = DdRecover.SelectedIndex;
+			if (i >= 0 && i <= 2) {
+				MainForm.RestoreMode = (DeckRestoreMode)i;
+			}
+			MainForm.FlushConfig();
 		}
 	}
 	public class ColorPairButton : Button {

@@ -24,6 +24,7 @@ namespace CropperDeck {
 		public List<CropMargins> Margins = new List<CropMargins>();
 		public List<CropMargins> HiddenMargins = new List<CropMargins>();
 		public DeckColors CustomColors = new DeckColors();
+		public DeckRestoreMode RestoreMode = DeckRestoreMode.Ask;
 		public DeckState() {
 
 		}
@@ -36,9 +37,11 @@ namespace CropperDeck {
 			Width = form.Width;
 			Height = form.Height;
 			CustomColors = form.CustomColors;
+			RestoreMode = form.RestoreMode;
+			var saveTitles = RestoreMode != DeckRestoreMode.Never;
 			foreach (var m in form.CropMargins) Margins.Add(m);
-			foreach (var pan in form.GetDeckColumns()) {
-				var cm = pan.CropMargins;
+			foreach (var col in form.GetDeckColumns()) {
+				var cm = col.CropMargins;
 				var cmName = cm.Name;
 				if (!MarginsContainName(Margins, cmName)
 					&& !MarginsContainName(CropMargins.Special, cmName)
@@ -47,11 +50,12 @@ namespace CropperDeck {
 					HiddenMargins.Add(cm);
 				}
 				var cd = new ColumnData();
-				cd.Name = pan.ColumnName;
-				cd.Icon = pan.IconName;
+				cd.Name = col.ColumnName;
+				cd.Icon = col.IconName;
 				cd.CropStyle = cmName;
-				if (pan.TfWidth.Text != "") {
-					cd.Width = pan.Width;
+				if (saveTitles) cd.LastTitle = col.Window != null ? col.Window.Title : col.LastTitle;
+				if (col.TfWidth.Text != "") {
+					cd.Width = col.Width;
 				} else cd.Width = null;
 				Columns.Add(cd);
 			}
@@ -61,36 +65,38 @@ namespace CropperDeck {
 			form.ResizeAndCenter(Width, Height);
 			form.PanCtr.Controls.Clear();
 			form.CropMargins = Margins.Count == 0 ? CropMargins.Default.ToList() : Margins.ToList();
+			form.RestoreMode = RestoreMode;
 			form.PanCtr.SuspendLayout();
-			foreach (var panState in Columns) {
-				var pan = new DeckColumn(form);
+			foreach (var colState in Columns) {
+				var col = new DeckColumn(form);
 
 				CropMargins cm;
 				do {
-					cm = Margins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					cm = Margins.Where(m => m.Name == colState.CropStyle).FirstOrDefault();
 					if (cm.Name != null) break;
-					cm = CropMargins.Special.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					cm = CropMargins.Special.Where(m => m.Name == colState.CropStyle).FirstOrDefault();
 					if (cm.Name != null) break;
-					cm = HiddenMargins.Where(m => m.Name == panState.CropStyle).FirstOrDefault();
+					cm = HiddenMargins.Where(m => m.Name == colState.CropStyle).FirstOrDefault();
 					if (cm.Name != null) break;
 					cm = CropMargins.Zero;
 				} while (false);
-				pan.CropMargins = cm;
+				col.CropMargins = cm;
 
-				pan.TfName.Text = pan.TlName.Text = pan.ColumnName = panState.Name;
-				if (panState.Icon != "") {
-					pan.IconName = panState.Icon;
-					if (File.Exists(pan.IconPath)) {
-						pan.TbConfig.Image = DeckColumn.LoadImage(pan.IconPath);
+				col.TfName.Text = col.TlName.Text = col.ColumnName = colState.Name;
+				if (colState.Icon != "") {
+					col.IconName = colState.Icon;
+					if (File.Exists(col.IconPath)) {
+						col.TbConfig.Image = DeckColumn.LoadImage(col.IconPath);
 					}
 				}
-				if (panState.Width.HasValue) {
-					pan.Width = panState.Width.Value;
-					pan.TfWidth.Text = pan.Width.ToString();
+				if (colState.Width.HasValue) {
+					col.Width = colState.Width.Value;
+					col.TfWidth.Text = col.Width.ToString();
 				}
+				col.LastTitle = colState.LastTitle;
 
-				form.PanCtr.Controls.Add(pan);
-				form.PanCtr.Controls.SetChildIndex(pan, 0);
+				form.PanCtr.Controls.Add(col);
+				form.PanCtr.Controls.SetChildIndex(col, 0);
 			}
 			form.PanCtr.ResumeLayout();
 			form.CustomColors = CustomColors;
@@ -133,11 +139,17 @@ namespace CropperDeck {
 			return CreateDefault(name);
 		}
 	}
+	public enum DeckRestoreMode {
+		Ask = 0,
+		Always = 1,
+		Never = 2,
+	}
 	public class ColumnData {
 		public string Name;
 		public string Icon;
 		public string CropStyle;
 		public int? Width;
+		public string LastTitle;
 		public ColumnData() { }
 	}
 }

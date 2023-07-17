@@ -8,6 +8,8 @@ using System.Threading.Tasks;
 namespace CropperDeck {
 	/// <summary>
 	/// Assorted imports, mostly from pinvoke.net
+	/// TODO: make a cool window picker sometime?
+	/// http://web.archive.org/web/20230000000000*/http://bartdesmet.net/blogs/bart/archive/2006/10/05/4495.aspx
 	/// </summary>
 	public class WinAPI {
 		[DllImport("user32.dll", SetLastError = true)]
@@ -65,6 +67,36 @@ namespace CropperDeck {
 
 		[DllImport("user32.dll", SetLastError = true)]
 		public static extern bool AdjustWindowRectEx(ref WinAPI_Rect lpRect, uint dwStyle, bool bMenu, uint dwExStyle);
+
+		[DllImport("user32.dll")]
+		public static extern int EnumWindows(EnumWindowsCallback lpEnumFunc, int lParam);
+
+		public delegate bool EnumWindowsCallback(IntPtr hwnd, int lParam);
+
+		[DllImport("user32.dll")]
+		public static extern void GetWindowText(IntPtr hWnd, StringBuilder lpString, int nMaxCount);
+
+		public const int MaxWindowTextLen = 256;
+		public static string GetWindowText(IntPtr hWnd, int nMaxCount = MaxWindowTextLen) {
+			var sb = new StringBuilder(nMaxCount);
+			GetWindowText(hWnd, sb, sb.Capacity);
+			return sb.ToString();
+		}
+
+		static string __GetWindowsWithTitle_Title;
+		static List<IntPtr> __GetWindowsWithTitle_List;
+		static bool __GetWindowsWithTitle_Iter(IntPtr hwnd, int lParam) {
+			if (GetWindowText(hwnd) == __GetWindowsWithTitle_Title) {
+				__GetWindowsWithTitle_List.Add(hwnd);
+			}
+			return true;
+		}
+		public static List<IntPtr> FindWindowsByTitle(string title) {
+			__GetWindowsWithTitle_Title = title;
+			__GetWindowsWithTitle_List = new List<IntPtr>();
+			EnumWindows(__GetWindowsWithTitle_Iter, 0);
+			return __GetWindowsWithTitle_List;
+		}
 	}
 
 	public static class WinAPI_GWL

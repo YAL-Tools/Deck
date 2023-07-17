@@ -70,6 +70,12 @@
     <Compile Include="Forms\DeckPicker.Designer.cs">
       <DependentUpon>DeckPicker.cs</DependentUpon>
     </Compile>
+    <Compile Include="Forms\DeckRestoreForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Forms\DeckRestoreForm.Designer.cs">
+      <DependentUpon>DeckRestoreForm.cs</DependentUpon>
+    </Compile>
     <Compile Include="Forms\MainForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -102,6 +108,9 @@
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\DeckPicker.resx">
       <DependentUpon>DeckPicker.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Forms\DeckRestoreForm.resx">
+      <DependentUpon>DeckRestoreForm.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Forms\MainForm.resx">
       <DependentUpon>MainForm.cs</DependentUpon>

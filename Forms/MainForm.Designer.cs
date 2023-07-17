@@ -24,16 +24,15 @@
 		/// </summary>
 		private void InitializeComponent() {
 			this.components = new System.ComponentModel.Container();
-			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(MainForm));
 			this.TsSide = new System.Windows.Forms.ToolStrip();
-			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
-			this.PanCtr = new System.Windows.Forms.Panel();
-			this.TmFlush = new System.Windows.Forms.Timer(this.components);
-			this.DlgIconPicker = new System.Windows.Forms.OpenFileDialog();
 			this.TbAdd = new System.Windows.Forms.ToolStripButton();
 			this.TbRefresh = new System.Windows.Forms.ToolStripButton();
 			this.TbConfig = new System.Windows.Forms.ToolStripButton();
 			this.TbPickDeck = new System.Windows.Forms.ToolStripButton();
+			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
+			this.PanCtr = new System.Windows.Forms.Panel();
+			this.TmFlush = new System.Windows.Forms.Timer(this.components);
+			this.DlgIconPicker = new System.Windows.Forms.OpenFileDialog();
 			this.TsSide.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -53,31 +52,6 @@
 			this.TsSide.Size = new System.Drawing.Size(30, 450);
 			this.TsSide.TabIndex = 1;
 			this.TsSide.Text = "toolStrip1";
-			// 
-			// toolStripSeparator1
-			// 
-			this.toolStripSeparator1.Name = "toolStripSeparator1";
-			this.toolStripSeparator1.Size = new System.Drawing.Size(25, 6);
-			// 
-			// PanCtr
-			// 
-			this.PanCtr.AutoScroll = true;
-			this.PanCtr.BackColor = System.Drawing.Color.Transparent;
-			this.PanCtr.Dock = System.Windows.Forms.DockStyle.Fill;
-			this.PanCtr.Location = new System.Drawing.Point(30, 0);
-			this.PanCtr.Name = "PanCtr";
-			this.PanCtr.Size = new System.Drawing.Size(770, 450);
-			this.PanCtr.TabIndex = 2;
-			// 
-			// TmFlush
-			// 
-			this.TmFlush.Interval = 3000;
-			this.TmFlush.Tick += new System.EventHandler(this.TmFlush_Tick);
-			// 
-			// DlgIconPicker
-			// 
-			this.DlgIconPicker.Filter = "PNG images|*.png|All files|*.*";
-			this.DlgIconPicker.FileOk += new System.ComponentModel.CancelEventHandler(this.IconPicker_FileOk);
 			// 
 			// TbAdd
 			// 
@@ -119,6 +93,31 @@
 			this.TbPickDeck.Text = "Deck Picker";
 			this.TbPickDeck.Click += new System.EventHandler(this.TbPickDeck_Click);
 			// 
+			// toolStripSeparator1
+			// 
+			this.toolStripSeparator1.Name = "toolStripSeparator1";
+			this.toolStripSeparator1.Size = new System.Drawing.Size(25, 6);
+			// 
+			// PanCtr
+			// 
+			this.PanCtr.AutoScroll = true;
+			this.PanCtr.BackColor = System.Drawing.Color.Transparent;
+			this.PanCtr.Dock = System.Windows.Forms.DockStyle.Fill;
+			this.PanCtr.Location = new System.Drawing.Point(30, 0);
+			this.PanCtr.Name = "PanCtr";
+			this.PanCtr.Size = new System.Drawing.Size(770, 450);
+			this.PanCtr.TabIndex = 2;
+			// 
+			// TmFlush
+			// 
+			this.TmFlush.Interval = 3000;
+			this.TmFlush.Tick += new System.EventHandler(this.TmFlush_Tick);
+			// 
+			// DlgIconPicker
+			// 
+			this.DlgIconPicker.Filter = "PNG images|*.png|All files|*.*";
+			this.DlgIconPicker.FileOk += new System.ComponentModel.CancelEventHandler(this.IconPicker_FileOk);
+			// 
 			// MainForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -126,12 +125,12 @@
 			this.ClientSize = new System.Drawing.Size(800, 450);
 			this.Controls.Add(this.PanCtr);
 			this.Controls.Add(this.TsSide);
-			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(240, 240);
 			this.Name = "MainForm";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "YAL\'s Deck";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.MainForm_FormClosing);
+			this.Load += new System.EventHandler(this.MainForm_Load);
 			this.ResizeEnd += new System.EventHandler(this.MainForm_ResizeEnd);
 			this.TsSide.ResumeLayout(false);
 			this.TsSide.PerformLayout();

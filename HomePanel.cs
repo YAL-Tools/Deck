@@ -35,6 +35,8 @@ namespace CropperDeck {
 			#region Change Name
 			var tfName = new ToolStripTextBox();
 			tfName.Text = name;
+			tfName.AutoSize = false;
+			tfName.Width = 150;
 			tfName.KeyDown += (sender, args) => {
 				if (args.KeyCode == Keys.Enter) {
 					var newName = tfName.Text;
@@ -102,6 +104,7 @@ namespace CropperDeck {
 					);
 					return;
 				}
+				DeckPicker.PanList.Controls.Remove(this);
 			};
 			CmActions.Items.Add(tbDelete);
 			#endregion

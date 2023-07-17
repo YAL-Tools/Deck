@@ -23,6 +23,7 @@
 		/// the contents of this method with the code editor.
 		/// </summary>
 		private void InitializeComponent() {
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DeckPicker));
 			this.PanList = new System.Windows.Forms.Panel();
 			this.BtNew = new System.Windows.Forms.Button();
 			this.TbNew = new System.Windows.Forms.TextBox();
@@ -122,10 +123,11 @@
 			this.Controls.Add(this.TbNew);
 			this.Controls.Add(this.BtNew);
 			this.Controls.Add(this.PanList);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.MinimumSize = new System.Drawing.Size(350, 150);
 			this.Name = "DeckPicker";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-			this.Text = "Pick a deck!";
+			this.Text = "YAL\'s Deck";
 			this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DeckPicker_FormClosing);
 			this.Load += new System.EventHandler(this.DeckPicker_Load);
 			this.ResumeLayout(false);
@@ -134,13 +136,12 @@
 		}
 
 		#endregion
-
-		private System.Windows.Forms.Panel PanList;
 		private System.Windows.Forms.Button BtNew;
 		private System.Windows.Forms.TextBox TbNew;
 		private System.Windows.Forms.Button BtCloseAll;
 		private System.Windows.Forms.Button BtRefresh;
 		public System.Windows.Forms.CheckBox CbAutoHide;
 		public System.Windows.Forms.CheckBox CbCustomColors;
+		public System.Windows.Forms.Panel PanList;
 	}
 }

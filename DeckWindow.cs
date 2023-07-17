@@ -10,6 +10,9 @@ namespace CropperDeck {
 		public DeckColumn Column;
 		public IntPtr Handle;
 		public WinAPI_Rect OrigRect = new WinAPI_Rect();
+		public string Title {
+			get => WinAPI.GetWindowText(Handle);
+		}
 		public CropMarginsResult GetCropMargins() {
 			var m = Column.CropMargins;
 			if (m.Func != null) {

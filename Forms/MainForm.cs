@@ -1,4 +1,5 @@
-﻿using System;
+﻿using CropperDeck.Forms;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -30,6 +31,9 @@ namespace CropperDeck {
 		public Panel PanOverlay;
 		public DeckColumn PanOverlayColumn = null;
 		public DeckColors CustomColors = new DeckColors();
+		private DeckState RestoreState;
+		public DeckRestoreMode RestoreMode;
+		public DeckRestoreForm RestoreForm = null;
 
 		public void FlushConfig() {
 			if (!TmFlush.Enabled) TmFlush.Start();
@@ -56,13 +60,17 @@ namespace CropperDeck {
 
 		public MainForm(HomePanel homePanel) {
 			InitializeComponent();
+			Icon = homePanel.DeckPicker.Icon;
 			HomePanel = homePanel;
 			Suffix = Text;
 			DeckName = homePanel.DeckName;
 			SyncTitle();
 			DoubleBuffered = true;
 			SetStyle(ControlStyles.OptimizedDoubleBuffer, true);
-			DeckState.Load(DeckName).Apply(this);
+			var state = DeckState.Load(DeckName);
+			state.Apply(this);
+
+			RestoreState = state;
 
 			PanOverlay = new Panel();
 			PanOverlay.BackColor = Color.Black;//Color.FromArgb(170, Color.Black);
@@ -78,6 +86,7 @@ namespace CropperDeck {
 			TmFlush_Tick(null, null);
 			EjectWindows();
 			ConfigForm?.Close();
+			RestoreForm?.Close();
 			HomePanel.MainForm = null;
 			var deckPicker = HomePanel.DeckPicker;
 			HomePanel = null;
@@ -213,6 +222,12 @@ namespace CropperDeck {
 			cc.ApplyToToolStrip(TsSide);
 			foreach (var col in GetDeckColumns()) {
 				cc.ApplyToToolStrip(col.ToolStrip);
+				if (en) {
+					cc.Window.ApplyTo(col.LastTitleLabel);
+				} else {
+					col.LastTitleLabel.ForeColor = DefaultForeColor;
+					col.LastTitleLabel.BackColor = Color.Transparent;
+				}
 			}
 		}
 
@@ -220,6 +235,30 @@ namespace CropperDeck {
 			if (HomePanel.DeckPicker.Visible) {
 				HomePanel.DeckPicker.Focus();
 			} else HomePanel.DeckPicker.Show();
+		}
+
+		private void MainForm_Load(object sender, EventArgs e) {
+			var state = RestoreState;
+			if (state == null) return;
+			RestoreState = null;
+
+			var wantRestore = false;
+			var canRestore = false;
+			if (RestoreMode != DeckRestoreMode.Never) {
+				canRestore = state.Columns.Where(c => c.LastTitle != null).Count() > 0;
+				if (!canRestore) {
+					//
+				} else if (RestoreMode == DeckRestoreMode.Ask) {
+					wantRestore = MessageBox.Show(
+						"Would you like to re-insert the windows that were embedded last time?",
+						Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question
+					) == DialogResult.Yes;
+				} else wantRestore = true;
+			}
+			if (wantRestore) {
+				RestoreForm = new DeckRestoreForm(this, state);
+				RestoreForm.Show();
+			}
 		}
 	}
 }
