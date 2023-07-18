@@ -40,6 +40,7 @@ namespace CropperDeck {
 		public void Update() {
 			var stripHeight = 0;//Panel.ToolStrip.Height;
 			var height = Column.WindowCtr.Height - stripHeight;
+			if (height <= 0) return; // the deck's probably minimized
 			var width = Column.WindowCtr.Width;
 			var m = GetCropMargins();
 			WinAPI.SetWindowRect(Handle,
