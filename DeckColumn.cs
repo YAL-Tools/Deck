@@ -75,6 +75,7 @@ namespace CropperDeck {
 
 			Controls.Add(WindowCtr);
 			Controls.Add(ToolStrip);
+			SyncCustomColors();
 		}
 		public void Destroy() {
 			Window?.Eject();
@@ -298,6 +299,16 @@ namespace CropperDeck {
 		public void UpdateCrop() {
 			Window?.Update();
 			LastTitleLabel.Visible = Window == null;
+		}
+		public void SyncCustomColors() {
+			var cc = MainForm.CustomColors;
+			cc.ApplyToToolStrip(ToolStrip);
+			if (cc.Enabled) {
+				cc.Window.ApplyTo(LastTitleLabel);
+			} else {
+				LastTitleLabel.ForeColor = DefaultForeColor;
+				LastTitleLabel.BackColor = Color.Transparent;
+			}
 		}
 	}
 	public class DeckColumnMarginButton : ToolStripButton { }

@@ -221,14 +221,9 @@ namespace CropperDeck {
 			cc.ApplyToForm(this);
 			cc.ApplyToToolStrip(TsSide);
 			foreach (var col in GetDeckColumns()) {
-				cc.ApplyToToolStrip(col.ToolStrip);
-				if (en) {
-					cc.Window.ApplyTo(col.LastTitleLabel);
-				} else {
-					col.LastTitleLabel.ForeColor = DefaultForeColor;
-					col.LastTitleLabel.BackColor = Color.Transparent;
-				}
+				col.SyncCustomColors();
 			}
+			RestoreForm?.SyncCustomColors();
 		}
 
 		private void TbPickDeck_Click(object sender, EventArgs e) {

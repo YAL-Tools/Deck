@@ -17,6 +17,13 @@ namespace CropperDeck {
 			TextBox.SetTo(cc.TextBox);
 		}
 
+		static Color DefaultBackColor {
+			get => System.Windows.Forms.Control.DefaultBackColor;
+		}
+		static Color DefaultForeColor {
+			get => System.Windows.Forms.Control.DefaultForeColor;
+		}
+
 		public DeckColors() {
 			Window = new DeckColorPair(Color.FromArgb(64, 80, 112), Color.White);
 			Control = new DeckColorPair(Color.FromArgb(26, 32, 45), Color.White);
@@ -28,31 +35,27 @@ namespace CropperDeck {
 			return cc;
 		}
 
-		public void ApplyToForm(Form form) {
+		public void Apply(Control ctl, DeckColorPair pair, Color defaultBackColor, Color defaultForeColor) {
 			if (Enabled) {
-				Window.ApplyTo(form);
+				pair.ApplyTo(ctl);
 			} else {
-				form.BackColor = System.Windows.Forms.Control.DefaultBackColor;
-				form.ForeColor = System.Windows.Forms.Control.DefaultForeColor;
+				ctl.BackColor = defaultBackColor;
+				ctl.ForeColor = defaultForeColor;
 			}
+		}
+		public void ApplyToForm(Form form) {
+			Apply(form, Window, DefaultBackColor, DefaultForeColor);
 		}
 		public void ApplyToButton(Button bt) {
 			bt.FlatStyle = Enabled ? FlatStyle.Popup : FlatStyle.Standard;
-			if (Enabled) {
-				Control.ApplyTo(bt);
-			} else {
-				bt.BackColor = SystemColors.Control;
-				bt.ForeColor = SystemColors.ControlText;
-				bt.UseVisualStyleBackColor = true;
-			}
+			Apply(bt, Control, SystemColors.Control, SystemColors.ControlText);
+			if (!Enabled) bt.UseVisualStyleBackColor = true;
 		}
 		public void ApplyToTextBox(TextBox tb) {
-			if (Enabled) {
-				TextBox.ApplyTo(tb);
-			} else {
-				tb.BackColor = SystemColors.Window;
-				tb.ForeColor = SystemColors.WindowText;
-			}
+			Apply(tb, TextBox, SystemColors.Window, SystemColors.WindowText);
+		}
+		public void ApplyToCheckBox(CheckBox cb) {
+			Apply(cb, Window, DefaultBackColor, DefaultForeColor);
 		}
 		public void ApplyToToolStripTextBox(ToolStripTextBox toolStripTextBox) {
 			if (Enabled) {

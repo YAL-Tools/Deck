@@ -18,6 +18,17 @@ namespace CropperDeck.Forms {
 			InitializeComponent();
 			Icon = MainForm.Icon;
 			Text = MainForm.DeckName + " - Restore log";
+			SyncCustomColors();
+		}
+
+		public void SyncCustomColors() {
+			var cc = MainForm.CustomColors;
+			cc.ApplyToForm(this);
+			cc.ApplyToTextBox(TbLog);
+			cc.ApplyToTextBox(TbErrors);
+			cc.ApplyToButton(BtRetry);
+			cc.ApplyToButton(BtDone);
+			cc.ApplyToCheckBox(CbIgnoreAmbiguity);
 		}
 
 		private void DeckRecoverForm_Load(object sender, EventArgs e) {
