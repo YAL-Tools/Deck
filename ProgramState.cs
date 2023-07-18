@@ -6,12 +6,16 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.IO;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace CropperDeck {
 	public class ProgramState {
 		public const string Path = "config.json";
 		public DeckColors CustomColors = new DeckColors();
 		public bool AutoHideOnDeckOpen = true;
+		public bool CheckForUpdates = true;
+		public double LastUpdateCheck = 0;
+		public string RemoteVersion = null;
 
 		public ProgramState() {
 			//
@@ -40,6 +44,15 @@ namespace CropperDeck {
 			var text = JsonConvert.SerializeObject(this, Formatting.Indented);
 			File.WriteAllText(Path, text, Encoding.UTF8);
 		}
+		public bool TrySave() {
+			try {
+				Save();
+				return true;
+			} catch (Exception ex) {
+				MessageBox.Show(ex.ToString(), "Error saving configuration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				return false;
+			}
+		}
 		public static ProgramState Load() {
 			if (File.Exists(Path)) {
 				try {
@@ -51,7 +64,7 @@ namespace CropperDeck {
 					MessageBox.Show(e.ToString(), "Error loading configuration!", MessageBoxButtons.OK, MessageBoxIcon.Error);
 				}
 			}
-			return CreateDefault();
+			return null;
 		}
 	}
 }

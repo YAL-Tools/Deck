@@ -31,6 +31,7 @@
 			this.BtRefresh = new System.Windows.Forms.Button();
 			this.CbAutoHide = new System.Windows.Forms.CheckBox();
 			this.CbCustomColors = new System.Windows.Forms.CheckBox();
+			this.TbUpdates = new System.Windows.Forms.TextBox();
 			this.SuspendLayout();
 			// 
 			// PanList
@@ -41,13 +42,13 @@
 			this.PanList.AutoScroll = true;
 			this.PanList.Location = new System.Drawing.Point(12, 35);
 			this.PanList.Name = "PanList";
-			this.PanList.Size = new System.Drawing.Size(468, 294);
+			this.PanList.Size = new System.Drawing.Size(468, 293);
 			this.PanList.TabIndex = 0;
 			// 
 			// BtNew
 			// 
 			this.BtNew.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.BtNew.Location = new System.Drawing.Point(243, 335);
+			this.BtNew.Location = new System.Drawing.Point(243, 386);
 			this.BtNew.Name = "BtNew";
 			this.BtNew.Size = new System.Drawing.Size(75, 23);
 			this.BtNew.TabIndex = 1;
@@ -59,7 +60,7 @@
 			// 
 			this.TbNew.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-			this.TbNew.Location = new System.Drawing.Point(12, 337);
+			this.TbNew.Location = new System.Drawing.Point(12, 388);
 			this.TbNew.Name = "TbNew";
 			this.TbNew.Size = new System.Drawing.Size(225, 20);
 			this.TbNew.TabIndex = 2;
@@ -68,7 +69,7 @@
 			// BtCloseAll
 			// 
 			this.BtCloseAll.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.BtCloseAll.Location = new System.Drawing.Point(405, 335);
+			this.BtCloseAll.Location = new System.Drawing.Point(405, 386);
 			this.BtCloseAll.Name = "BtCloseAll";
 			this.BtCloseAll.Size = new System.Drawing.Size(75, 23);
 			this.BtCloseAll.TabIndex = 3;
@@ -79,7 +80,7 @@
 			// BtRefresh
 			// 
 			this.BtRefresh.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-			this.BtRefresh.Location = new System.Drawing.Point(324, 335);
+			this.BtRefresh.Location = new System.Drawing.Point(324, 386);
 			this.BtRefresh.Name = "BtRefresh";
 			this.BtRefresh.Size = new System.Drawing.Size(75, 23);
 			this.BtRefresh.TabIndex = 4;
@@ -111,11 +112,24 @@
 			this.CbCustomColors.UseVisualStyleBackColor = true;
 			this.CbCustomColors.CheckedChanged += new System.EventHandler(this.CbCustomColors_CheckedChanged);
 			// 
+			// TbUpdates
+			// 
+			this.TbUpdates.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+			this.TbUpdates.Location = new System.Drawing.Point(12, 334);
+			this.TbUpdates.Multiline = true;
+			this.TbUpdates.Name = "TbUpdates";
+			this.TbUpdates.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+			this.TbUpdates.Size = new System.Drawing.Size(468, 48);
+			this.TbUpdates.TabIndex = 7;
+			this.TbUpdates.DoubleClick += new System.EventHandler(this.TbUpdates_DoubleClick);
+			// 
 			// DeckPicker
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-			this.ClientSize = new System.Drawing.Size(492, 370);
+			this.ClientSize = new System.Drawing.Size(492, 421);
+			this.Controls.Add(this.TbUpdates);
 			this.Controls.Add(this.CbCustomColors);
 			this.Controls.Add(this.CbAutoHide);
 			this.Controls.Add(this.BtRefresh);
@@ -143,5 +157,6 @@
 		public System.Windows.Forms.CheckBox CbAutoHide;
 		public System.Windows.Forms.CheckBox CbCustomColors;
 		public System.Windows.Forms.Panel PanList;
+		private System.Windows.Forms.TextBox TbUpdates;
 	}
 }

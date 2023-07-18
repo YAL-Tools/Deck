@@ -1,12 +1,15 @@
 ﻿using CropperDeck.Properties;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Net;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -14,10 +17,96 @@ using System.Windows.Forms;
 namespace CropperDeck {
 	public partial class DeckPicker : Form {
 		public DeckColors CustomColors = new DeckColors();
+		private ProgramState ProgramState;
+		string ItchVersion;
+
+		private double GetUnixTime() {
+			return DateTime.UtcNow.Subtract(new DateTime(1970, 1, 1)).TotalSeconds;
+		}
 
 		public DeckPicker() {
 			InitializeComponent();
-			ProgramState.Load().Apply(this);
+
+			try {
+				ItchVersion = File.ReadAllText("version.txt");
+				//Text += $" ({ItchVersion})";
+			} catch (Exception) {
+				ItchVersion = "???";
+			}
+
+			ProgramState = ProgramState.Load();
+			var fresh = ProgramState == null;
+			if (fresh) {
+				ProgramState = ProgramState.CreateDefault();
+				FlushProgramState();
+			} else {
+				CheckForUpdates();
+			}
+			ProgramState.Apply(this);
+		}
+
+		const string DevlogURL = "https://yellowafterlife.itch.io/deck/devlog";
+		const string DblClickForDevlog = "\r\nDouble-click here to open the devlog, or open it yourself:\r\n" + DevlogURL;
+		const string VersionURL = "https://itch.io/api/1/x/wharf/latest?target=yellowafterlife/deck&channel_name=windows";
+		async void CheckForUpdates() {
+			if (ProgramState.LastUpdateCheck == 0) {
+				ProgramState.CheckForUpdates = MessageBox.Show(
+					"Hey, should we check for updates?\n" +
+					"This will ask itch.io about for the current version number once a day.\r\n" +
+					"Doing so does not transmit any information about your system/program.\r\n" +
+					"You can always change this (CheckForUpdates) in config.json later.",
+					Text, MessageBoxButtons.YesNo, MessageBoxIcon.Question
+				) == DialogResult.Yes;
+				if (!ProgramState.CheckForUpdates) FlushProgramState();
+			}
+			if (!ProgramState.CheckForUpdates) {
+				TbUpdates.Text = $"Not checking for updates (local version: {ItchVersion})"
+					+ "\r\nDouble-click here to open devlog."
+					+ "\r\n" + DevlogURL;
+				return;
+			}
+
+			var now = GetUnixTime();
+			var dt = now - ProgramState.LastUpdateCheck;
+			if (dt < 60 * 60 * 24 && ProgramState.RemoteVersion != null) {
+				if (ProgramState.RemoteVersion == "") {
+					TbUpdates.Text = $"Already checked for updates today! (you're using the latest version: {ItchVersion})" + DblClickForDevlog;
+				} else if (ProgramState.RemoteVersion != ItchVersion) {
+					TbUpdates.Text = "New version is available!"
+						+ $" (local: {ItchVersion}, remote: {ProgramState.RemoteVersion})" + DblClickForDevlog;
+				} else {
+					TbUpdates.Text = $"Already checked for updates today! (you're using the latest version: {ItchVersion})" + DblClickForDevlog;
+				}
+				return;
+			}
+			ProgramState.LastUpdateCheck = now;
+			FlushProgramState();
+			using (var client = new HttpClient()) {
+				ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls
+					| SecurityProtocolType.Tls11
+					| SecurityProtocolType.Tls12
+					| SecurityProtocolType.Ssl3;
+				TbUpdates.Text = "Checking for updates..." + DblClickForDevlog;
+				try {
+					var text = await client.GetStringAsync(VersionURL);
+					var json = JsonConvert.DeserializeObject<ItchDepotInfo>(text);
+					ProgramState.RemoteVersion = json.latest;
+					if (json.latest != ItchVersion) {
+						TbUpdates.Text = "New version is available!"
+							+ $" (local: {ItchVersion}, remote: {json.latest})" + DblClickForDevlog;
+					} else {
+						TbUpdates.Text = $"You're using the latest version! ({ItchVersion})" + DblClickForDevlog;
+					}
+					FlushProgramState();
+				} catch (Exception ex) {
+					TbUpdates.Text = "Update check failed:\r\n" + ex.ToString() + DblClickForDevlog;
+					ProgramState.RemoteVersion = "";
+					FlushProgramState();
+				}
+			}
+		}
+		class ItchDepotInfo {
+			public string latest;
 		}
 
 		public void SyncCustomColors() {
@@ -28,12 +117,12 @@ namespace CropperDeck {
 			cc.ApplyToButton(BtRefresh);
 			cc.ApplyToButton(BtCloseAll);
 			cc.ApplyToTextBox(TbNew);
+			cc.ApplyToTextBox(TbUpdates);
 		}
-		public void FlushConfig() {
+		public void FlushProgramState() {
 			try {
-				var config = new ProgramState();
-				config.Acquire(this);
-				config.Save();
+				ProgramState.Acquire(this);
+				ProgramState.TrySave();
 			} catch (Exception ex) {
 				MessageBox.Show(
 					"Could not save the picker state:\n" + ex,
@@ -123,7 +212,7 @@ namespace CropperDeck {
 				e.Cancel = true;
 				return;
 			}
-			FlushConfig();
+			FlushProgramState();
 		}
 
 		public static bool IsValidDeckName(string name) {
@@ -199,11 +288,16 @@ namespace CropperDeck {
 		private void CbCustomColors_CheckedChanged(object sender, EventArgs e) {
 			CustomColors.Enabled = CbCustomColors.Checked;
 			SyncCustomColors();
-			FlushConfig();
+			FlushProgramState();
 		}
 
 		private void BtCloseAll_Click(object sender, EventArgs e) {
 			foreach (var form in GetMainForms()) form.Close();
+		}
+
+		private void TbUpdates_DoubleClick(object sender, EventArgs e) {
+			ProcessStartInfo sInfo = new ProcessStartInfo(DevlogURL);
+			Process.Start(sInfo);
 		}
 	}
 }
