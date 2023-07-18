@@ -27,6 +27,7 @@ namespace CropperDeck.Forms {
 		public void Run() {
 			var info = new List<string>() { DateTime.Now.ToString() };
 			var errors = new List<string>();
+			var ignoreAmb = CbIgnoreAmbiguity.Checked;
 			TbErrors.Clear();
 			TbLog.Text = DateTime.Now.ToString() + "\r\n";
 			foreach (var col in MainForm.GetDeckColumns()) {
@@ -41,18 +42,15 @@ namespace CropperDeck.Forms {
 				var colName = col.ColumnName;
 
 				var hwnds = WinAPI.FindWindowsByTitle(lastTitle);
-				switch (hwnds.Count) {
-					case 1:
-						col.InsertWindowEx(hwnds[0]);
-						info.Add($"Re-added window \"{lastTitle}\" to column \"{colName}");
-						break;
-					case 0:
-						errors.Add($"Couldn't find \"{lastTitle}\" for column \"{colName}\"");
-						break;
-					default:
-						errors.Add($"There are {hwnds.Count} windows named \"{lastTitle}\" for column \"{colName}\".");
-						errors.Add($"Close/change the extra ones and retry or add the right one by hand.");
-						break;
+				var count = hwnds.Count;
+				if (count == 1 || count > 1 && ignoreAmb) {
+					col.InsertWindowEx(hwnds[0]);
+					info.Add($"Re-added window \"{lastTitle}\" to column \"{colName}\"");
+				} else if (count == 0) {
+					errors.Add($"Couldn't find \"{lastTitle}\" for column \"{colName}\"");
+				} else {
+					errors.Add($"There are {hwnds.Count} windows named \"{lastTitle}\" for column \"{colName}\".");
+					errors.Add($"Close/change the extra ones and retry or add the right one by hand.");
 				}
 			}
 			if (errors.Count == 0) errors.Add("No errors!");

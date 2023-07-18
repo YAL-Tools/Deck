@@ -29,6 +29,8 @@
 			this.TbErrors = new System.Windows.Forms.TextBox();
 			this.TmFocus = new System.Windows.Forms.Timer(this.components);
 			this.BtDone = new System.Windows.Forms.Button();
+			this.CbIgnoreAmbiguity = new System.Windows.Forms.CheckBox();
+			this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
 			this.SuspendLayout();
 			// 
 			// TbLog
@@ -78,11 +80,23 @@
 			this.BtDone.UseVisualStyleBackColor = true;
 			this.BtDone.Click += new System.EventHandler(this.BtDone_Click);
 			// 
+			// CbIgnoreAmbiguity
+			// 
+			this.CbIgnoreAmbiguity.AutoSize = true;
+			this.CbIgnoreAmbiguity.Location = new System.Drawing.Point(93, 344);
+			this.CbIgnoreAmbiguity.Name = "CbIgnoreAmbiguity";
+			this.CbIgnoreAmbiguity.Size = new System.Drawing.Size(103, 17);
+			this.CbIgnoreAmbiguity.TabIndex = 4;
+			this.CbIgnoreAmbiguity.Text = "Ignore ambiguity";
+			this.toolTip1.SetToolTip(this.CbIgnoreAmbiguity, "If there are multiple same-named windows, inserts the first one");
+			this.CbIgnoreAmbiguity.UseVisualStyleBackColor = true;
+			// 
 			// DeckRestoreForm
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(459, 375);
+			this.Controls.Add(this.CbIgnoreAmbiguity);
 			this.Controls.Add(this.BtDone);
 			this.Controls.Add(this.TbErrors);
 			this.Controls.Add(this.BtRetry);
@@ -104,5 +118,7 @@
 		private System.Windows.Forms.TextBox TbErrors;
 		private System.Windows.Forms.Timer TmFocus;
 		private System.Windows.Forms.Button BtDone;
+		private System.Windows.Forms.CheckBox CbIgnoreAmbiguity;
+		private System.Windows.Forms.ToolTip toolTip1;
 	}
 }

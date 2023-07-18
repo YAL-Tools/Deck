@@ -15,9 +15,10 @@ pause
 
 cd export
 set /p ver="Version?: "
+
 echo %ver%>version.txt
 cmd /C 7z a %zip% version.txt
-pause
+
 echo Uploading %ver%...
 cmd /C itchio-butler push %zip% yellowafterlife/deck:windows --userversion=%ver%
 pause
