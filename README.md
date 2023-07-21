@@ -65,3 +65,7 @@ and may considered suspicious by websites themselves.
 
 **Author:** YellowAfterlife  
 **License:** [GPLv3](https://www.gnu.org/licenses/gpl-3.0.en.html)
+
+### Special thanks
+
+- [Spitfire_x86](https://github.com/Spitfirex86) for contributing a snippet to auto-crop standard window borders.
