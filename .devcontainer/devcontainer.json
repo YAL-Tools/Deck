@@ -1,0 +1,20 @@
+{
+	"name": "Debian",
+	"dockerFile": "Dockerfile",
+	"features": {},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"EditorConfig.EditorConfig",
+				"ms-dotnettools.csharp"
+			],
+			"settings": {
+				"omnisharp.useModernNet": false
+			}
+		}
+	},
+	"postAttachCommand": {
+		"fix-git": "git config --global --add safe.directory /workspaces/Deck",
+		"add-packages": "nuget restore"
+	}
+}
