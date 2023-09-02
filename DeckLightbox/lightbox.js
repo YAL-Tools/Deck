@@ -333,7 +333,7 @@
 	}
 	function CohostChecker() {
 		for (let query of [
-			`img.object-cover.cursor-pointer:not([${attrLbFull}])`
+			`img[data-attachment-id]:not([${attrLbFull}])`
 		]) for (let img of document.querySelectorAll(query)) {
 			let url = img.src;
 			url = url.replace(/\b(?:width|height)=\w+(?:&|$)/g, "");
